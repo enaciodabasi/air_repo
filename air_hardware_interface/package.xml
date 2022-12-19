@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>air_hardware_interface</name>
+  <version>0.0.0</version>
+  <description>The air_hardware_interface package</description>
+  <maintainer email="naci@todo.todo">naci</maintainer>
+
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>controller_manager</build_depend>
+  <build_depend>hardware_interface</build_depend>
+  <build_export_depend>controller_manager</build_export_depend>
+  <build_export_depend>hardware_interface</build_export_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>hardware_interface</exec_depend>
+  <depend>air_arm_robot</depend>
+  <depend>roscpp</depend>
+  <export>
+
+
+  </export>
+</package>

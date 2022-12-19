@@ -1,0 +1,11 @@
+arm:
+  hardware_interface:
+    loop_hz: 50
+    joints:
+      - s1j
+      - s2j
+      - s3j
+      - ej
+      - rollj
+      - pitchj
+      - yawj
