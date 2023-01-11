@@ -4,6 +4,8 @@ project(amr_custom_interfaces)
 find_package(catkin REQUIRED COMPONENTS
     roscpp
     std_msgs
+    nav_msgs
+    geometry_msgs
     message_generation
 )
 
@@ -15,11 +17,14 @@ add_message_files(
 add_service_files(
     FILES
     AmrMoveGoalSrv.srv
+    OdomSrv.srv
 )
 
 generate_messages(
     DEPENDENCIES
     std_msgs
+    nav_msgs
+    geometry_msgs
 )
 
 catkin_package(
