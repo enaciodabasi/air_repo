@@ -27,6 +27,7 @@ namespace amr
             m_LastUpdateTime = current_time;
             m_PrevEncoderTicks = encoder_ticks;
 
+            return m_State;
         }
     }
 }

@@ -20,8 +20,26 @@
   <build_depend>roscpp</build_depend>
   <exec_depend>roscpp</exec_depend>
 
+  <build_depend>hardware_interface</build_depend>
+  <exec_depend>hardware_interface</exec_depend>
+
+  <build_depend>geometry_msgs</build_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  
+  <build_depend>nav_msgs</build_depend>
+  <exec_depend>nav_msgs</exec_depend>
+
+  <build_depend>sensor_msgs</build_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+
+  <build_depend>controller_manager</build_depend>
+  <exec_depend>controller_manager</exec_depend>
+
+  <!-- 
   <build_depend>soem</build_depend>
   <exec_depend>soem</exec_depend>
+  -->
+
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

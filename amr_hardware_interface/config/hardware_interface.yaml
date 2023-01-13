@@ -10,6 +10,17 @@ amr:
       - 5
       - 6
     port_num: 851
+    symbols:
+      left_encoder: "left_encoder_symbol"
+      right_encoder: "right_encoder_symbol"
+
+      left_motor: "left_motor_symbol"
+      right_motor: "right_motor_symbol"
 
   hardware_interface:
+    joints:
+    - "left_wheel_joint_name"
+    - "right_wheel_joint_name"
     loop_hz: 50
+    encoders:
+      resolution: 18

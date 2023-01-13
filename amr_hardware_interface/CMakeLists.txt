@@ -8,7 +8,8 @@ find_package(catkin REQUIRED COMPONENTS
     amr_custom_interfaces
     geometry_msgs
     nav_msgs
-
+    sensor_msgs
+    controller_manager
 )
 find_library(ADSLIB REQUIRED)
 
@@ -45,16 +46,26 @@ include_directories(
   ${AdsLib_INCLUDE_DIRS}
 )
 
+
+
+#add_executable(encoder_demo src/encoder_pub_demo.cpp)
+#target_link_libraries(encoder_demo ${catkin_LIBRARIES})
+#target_link_directories(encoder_demo PUBLIC ${catkin_INCLUDE_DIRS})
+
 add_executable(amr_hwi_node
     src/amr_hwi.cpp
+    src/io_ads.cpp
 )
-
-add_executable(encoder_demo src/encoder_pub_demo.cpp)
-target_link_libraries(encoder_demo ${catkin_LIBRARIES})
-target_link_directories(encoder_demo PUBLIC ${catkin_INCLUDE_DIRS})
-
 target_link_libraries(amr_hwi_node ${catkin_LIBRARIES} ADSLIB)
 target_link_directories(amr_hwi_node PUBLIC ${AdsLib_INCLUDE_DIRS})
+
+add_executable(amr_controlled_hwi_node
+    src/amr_ddc_hwi.cpp
+    src/amr_hwi_utility.cpp
+    src/io_ads.cpp
+)
+target_link_libraries(amr_controlled_hwi_node ${catkin_LIBRARIES} ADSLIB)
+target_link_directories(amr_controlled_hwi_node PUBLIC ${AdsLib_INCLUDE_DIRS})
 
 install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch)
 install(DIRECTORY config DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config)

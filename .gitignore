@@ -11,3 +11,5 @@ sr80_hardware_interface/src/sr80_hw_interface.cpp
 sr80_hardware_interface/src/sr80_hw.cpp
 sr80_hardware_interface/src/sr80_hwi_node.cpp
 sr80_hardware_interface/src/sr80_interface.cpp
+.vscode/c_cpp_properties.json
+.vscode/settings.json

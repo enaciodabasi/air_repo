@@ -81,32 +81,77 @@ namespace amr
 
         void HardwareInterface::update(const ros::TimerEvent& timer_event)
         {
+            this->read();
 
+            ros::Duration elapsedTime = ros::Duration(timer_event.current_real - timer_event.last_real);
+
+            m_ControllerManager->update(timer_event.current_real, elapsedTime);
+
+            this->write(elapsedTime);
         }
 
         void HardwareInterface::write(ros::Duration& elapsed_time)
         {
+            ros::Duration elapsedTime = elapsed_time;
 
+            try
+            {
+                std::weak_ptr<AdsDevice> routeWeakPtr =  m_AdsInterface->getRoute();
+                std::shared_ptr<AdsDevice> routeSharedPtr = routeWeakPtr.lock();
+
+                AdsVariable<double> leftMotorAds{*routeSharedPtr, m_SymbolNameMap["left_motor"]};
+                AdsVariable<double> rightMotorAds{*routeSharedPtr, m_SymbolNameMap["right_motor"]};
+
+                leftMotorAds = m_VelocityCommands[0];
+                rightMotorAds = m_VelocityCommands[1];
+            }
+            catch(AdsException& ex)
+            {
+                std::cout << ex.what();
+            }
+            catch(std::system_error& ex)
+            {
+                std::cout << ex.what();
+            }
         }
 
         void HardwareInterface::read()
         {
-            
-            // Get encoder ticks from Beckhoff via ADS.
-            //
+        
+            long encoderLeft = 0;
+            long encoderRight = 0;
 
-            long encoderLeft;
-            long encoderRight;
+            // Get encoder ticks from Beckhoff via ADS.
+            try
+            {   
+                std::weak_ptr<AdsDevice> routeWeakPtr =  m_AdsInterface->getRoute();
+                std::shared_ptr<AdsDevice> routeSharedPtr = routeWeakPtr.lock();
+
+                AdsVariable<long> leftEncoderAds{*routeSharedPtr, m_SymbolNameMap["left_encoder"]};
+                AdsVariable<long> rightEncoderAds{*routeSharedPtr, m_SymbolNameMap["right_encoder"]};
+
+                encoderLeft = leftEncoderAds;
+                encoderRight = rightEncoderAds;
+
+            }
+            catch(AdsException& ex)
+            {
+                std::cout << ex.what();
+            }
+            catch(std::system_error& ex)
+            {
+                std::cout << ex.what();
+            }
 
             ros::Time currentTime = ros::Time::now();
             utils::State* statePtr;
-            statePtr = &m_LeftWheelState->getState(currentTime, encoderLeft);
+            *statePtr = m_LeftWheelState->getState(currentTime, encoderLeft);
             
             m_JointPositions[0] = statePtr->angularPos;
             m_JointVelocities[0] = statePtr->angularVel;
             m_JointEfforts[0] = 0.0;
 
-            statePtr = &m_RightWheelState->getState(currentTime, encoderRight);
+            *statePtr = m_RightWheelState->getState(currentTime, encoderRight);
 
             m_JointPositions[1] = statePtr->angularPos;
             m_JointPositions[1] = statePtr->angularVel;
@@ -197,8 +242,68 @@ namespace amr
             {
                 ROS_INFO("Could not find encoder resolution in the parameter server. Defaulting back to 18 Bits.");
             }
+
+            if(m_NodeHandle.hasParam("/amr/ads_config/symbols/left_encoder"))
+            {
+                std::string tempStr;
+                m_NodeHandle.getParam("/amr/ads_config/symbols/left_encoder", tempStr);
+                m_SymbolNameMap["left_encoder"] = tempStr;
+            }
+            else
+            {
+                ROS_ERROR_NAMED("ADS configuration error", "Can't find symbol name for the left encoder. Shutting down...");
+                ros::shutdown();
+            }
+            if(m_NodeHandle.hasParam("/amr/ads_config/symbols/right_encoder"))
+            {
+                std::string tempStr;
+                m_NodeHandle.getParam("/amr/ads_config/symbols/right_encoder", tempStr);
+                m_SymbolNameMap["right_encoder"] = tempStr;
+            }
+            else
+            {
+                ROS_ERROR_NAMED("ADS configuration error", "Can't find symbol name for the right encoder. Shutting down...");
+                ros::shutdown();
+            }
+
+            if(m_NodeHandle.hasParam("/amr/ads_config/symbols/left_motor"))
+            {
+                std::string tempStr;
+                m_NodeHandle.getParam("/amr/ads_config/symbols/left_motor", tempStr);
+                m_SymbolNameMap["left_motor"] = tempStr;
+            }
+            else
+            {
+                ROS_ERROR_NAMED("ADS configuration error", "Can't find symbol name for the left motor. Shutting down...");
+                ros::shutdown();
+            }
             
+            if(m_NodeHandle.hasParam("/amr/ads_config/symbols/right_motor"))
+            {
+                std::string tempStr;
+                m_NodeHandle.getParam("/amr/ads_config/symbols/right_motor", tempStr);
+                m_SymbolNameMap["right_motor"] = tempStr;
+            }
+            else
+            {
+                ROS_ERROR_NAMED("ADS configuration error", "Can't find symbol name for the right motor. Shutting down...");
+                ros::shutdown();
+            }
 
         }
     }
+}
+
+int main(int argc, char** argv)
+{
+    ros::init(argc, argv, "amr_hardware_interface_node");
+    ros::NodeHandle nh;
+    ros::AsyncSpinner spinner(2);
+    spinner.start();
+
+    amr::controlled_hwi::HardwareInterface amr_hwi(nh);
+
+    ros::waitForShutdown();
+
+    return 0;
 }

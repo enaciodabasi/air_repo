@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 #include <boost/shared_ptr.hpp>
 
 namespace amr
@@ -64,6 +65,8 @@ namespace amr
             std::unique_ptr<io::ads_interface> m_AdsInterface;
 
             io::AdsInfo m_AdsInfo;
+
+            std::unordered_map<std::string, std::string> m_SymbolNameMap;
 
             void loadParams();
 
