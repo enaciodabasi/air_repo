@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+
+    <rosparam file="$(find air_hardware_interface)/config/hardware.yaml" command="load"></rosparam>
+
+    <node pkg="air_hardware_interface" name="air_right_arm_hw_interface_node" type="air_right_arm_hw_interface_node" output="screen"></node>
+
+</launch>

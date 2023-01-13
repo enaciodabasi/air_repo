@@ -1,0 +1,633 @@
+<sdf version='1.7'>
+  <model name='amr'>
+    <link name='base_link'>
+      <inertial>
+        <pose>0.000332 -0 0.02268 0 -0 0</pose>
+        <mass>16.6608</mass>
+        <inertia>
+          <ixx>0.3429</ixx>
+          <ixy>-0.00791208</ixy>
+          <ixz>-4.11697e-05</ixz>
+          <iyy>0.595999</iyy>
+          <iyz>-2.06655e-17</iyz>
+          <izz>0.933089</izz>
+        </inertia>
+      </inertial>
+      <collision name='base_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/base_link.STL</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='base_link_fixed_joint_lump__hokuyo_link_collision_1'>
+        <pose>0.4 0.25 0.2 0 -0 0.7853</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='base_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/base_link.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Blue</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+        </material>
+      </visual>
+      <visual name='base_link_fixed_joint_lump__hokuyo_link_visual_1'>
+        <pose>0.4 0.25 0.2 0 -0 0.7853</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <sensor name='head_hokuyo_sensor' type='gpu_ray'>
+        <visualize>1</visualize>
+        <update_rate>40</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>1080</samples>
+              <resolution>1</resolution>
+              <min_angle>-2.35619</min_angle>
+              <max_angle>2.35619</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.1</min>
+            <max>30</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.02</stddev>
+          </noise>
+        </ray>
+        <plugin name='gazebo_ros_head_hokuyo_controller' filename='libgazebo_ros_gpu_laser.so'>
+          <topicName>/scan</topicName>
+          <frameName>hokuyo_link</frameName>
+        </plugin>
+        <pose>0.4 0.25 0.2 0 -0 0.7853</pose>
+      </sensor>
+    </link>
+    <joint name='flc_joint' type='revolute'>
+      <pose relative_to='base_link'>0.325 0.15 0 1.5708 -0 0.302678</pose>
+      <parent>base_link</parent>
+      <child>flc_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='flc_link'>
+      <pose relative_to='flc_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 -0.010464 0 0 -0 0</pose>
+        <mass>0.00737118</mass>
+        <inertia>
+          <ixx>1.43644e-06</ixx>
+          <ixy>-9.24994e-23</ixy>
+          <ixz>0</ixz>
+          <iyy>1.26134e-07</iyy>
+          <iyz>3.92477e-23</iyz>
+          <izz>1.42001e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='flc_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/flc_link.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='flc_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/flc_link.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='flw_joint' type='revolute'>
+      <pose relative_to='flc_link'>0 -0.03 0 3.14159 -0 3.14159</pose>
+      <parent>flc_link</parent>
+      <child>flw_link</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='flw_link'>
+      <pose relative_to='flw_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>-0 0 0 0 -0 0</pose>
+        <mass>0.00384531</mass>
+        <inertia>
+          <ixx>2.51868e-07</ixx>
+          <ixy>-4.58926e-41</ixy>
+          <ixz>-4.63221e-23</ixz>
+          <iyy>2.51868e-07</iyy>
+          <iyz>-4.1799e-40</iyz>
+          <izz>4.80664e-07</izz>
+        </inertia>
+      </inertial>
+      <collision name='flw_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/flw_link.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='flw_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/flw_link.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='frc_joint' type='revolute'>
+      <pose relative_to='base_link'>0.325 -0.15 0 1.5708 -0 0.302678</pose>
+      <parent>base_link</parent>
+      <child>frc_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='frc_link'>
+      <pose relative_to='frc_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 -0.010464 -0 0 -0 0</pose>
+        <mass>0.00737118</mass>
+        <inertia>
+          <ixx>1.43644e-06</ixx>
+          <ixy>-9.45086e-23</ixy>
+          <ixz>0</ixz>
+          <iyy>1.26134e-07</iyy>
+          <iyz>4.20234e-23</iyz>
+          <izz>1.42001e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='frc_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/frc_link.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='frc_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/frc_link.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='frw_joint' type='revolute'>
+      <pose relative_to='frc_link'>0 -0.03 0 3.14159 -0 3.14159</pose>
+      <parent>frc_link</parent>
+      <child>frw_link</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='frw_link'>
+      <pose relative_to='frw_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.00384531</mass>
+        <inertia>
+          <ixx>2.51868e-07</ixx>
+          <ixy>-4.58926e-41</ixy>
+          <ixz>-4.63221e-23</ixz>
+          <iyy>2.51868e-07</iyy>
+          <iyz>-4.1799e-40</iyz>
+          <izz>4.80664e-07</izz>
+        </inertia>
+      </inertial>
+      <collision name='frw_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/frw_link.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='frw_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/frw_link.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='lw_joint' type='revolute'>
+      <pose relative_to='base_link'>0 0.26 0.055 -1.5708 0.273855 3.14159</pose>
+      <parent>base_link</parent>
+      <child>lw_link</child>
+      <axis>
+        <xyz>0 0 -1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='lw_link'>
+      <pose relative_to='lw_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 -0.027388 0 -0 0</pose>
+        <mass>1.34185</mass>
+        <inertia>
+          <ixx>0.00397939</ixx>
+          <ixy>-2.1684e-19</ixy>
+          <ixz>-5.7971e-20</ixz>
+          <iyy>0.00397939</iyy>
+          <iyz>1.23941e-21</iyz>
+          <izz>0.00747908</izz>
+        </inertia>
+      </inertial>
+      <collision name='lw_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/lw_link.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='lw_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/lw_link.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='rlc_joint' type='revolute'>
+      <pose relative_to='base_link'>-0.325 0.15 0 1.5708 -0 -1.03858</pose>
+      <parent>base_link</parent>
+      <child>rlc_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='rlc_link'>
+      <pose relative_to='rlc_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 -0.010464 0 0 -0 0</pose>
+        <mass>0.00737118</mass>
+        <inertia>
+          <ixx>1.43644e-06</ixx>
+          <ixy>-1.01782e-21</ixy>
+          <ixz>-1.58819e-22</ixz>
+          <iyy>1.26134e-07</iyy>
+          <iyz>-2.21052e-22</iyz>
+          <izz>1.42001e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='rlc_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/rlc_link.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='rlc_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/rlc_link.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='rlw_joint' type='revolute'>
+      <pose relative_to='rlc_link'>0 -0.03 0 -3.14159 -0 0.637763</pose>
+      <parent>rlc_link</parent>
+      <child>rlw_link</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='rlw_link'>
+      <pose relative_to='rlw_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.00384531</mass>
+        <inertia>
+          <ixx>2.51868e-07</ixx>
+          <ixy>5.29396e-23</ixy>
+          <ixz>3.3749e-22</ixz>
+          <iyy>2.51868e-07</iyy>
+          <iyz>2.8455e-22</iyz>
+          <izz>4.80664e-07</izz>
+        </inertia>
+      </inertial>
+      <collision name='rlw_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/rlw_link.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='rlw_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/rlw_link.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='rrc_joint' type='revolute'>
+      <pose relative_to='base_link'>-0.325 -0.15 0 1.5708 -0 -2.0458</pose>
+      <parent>base_link</parent>
+      <child>rrc_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='rrc_link'>
+      <pose relative_to='rrc_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 -0.010464 0 0 -0 0</pose>
+        <mass>0.00737118</mass>
+        <inertia>
+          <ixx>1.43644e-06</ixx>
+          <ixy>-3.97763e-22</ixy>
+          <ixz>1.58819e-22</ixz>
+          <iyy>1.26134e-07</iyy>
+          <iyz>-1.05058e-22</iyz>
+          <izz>1.42001e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='rrc_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/rrc_link.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='rrc_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/rrc_link.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='rrw_joint' type='revolute'>
+      <pose relative_to='rrc_link'>0 -0.03 0 0 0 -0.137551</pose>
+      <parent>rrc_link</parent>
+      <child>rrw_link</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='rrw_link'>
+      <pose relative_to='rrw_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>-0 0 0 0 -0 0</pose>
+        <mass>0.00384531</mass>
+        <inertia>
+          <ixx>2.51868e-07</ixx>
+          <ixy>-4.96308e-24</ixy>
+          <ixz>-7.94093e-23</ixz>
+          <iyy>2.51868e-07</iyy>
+          <iyz>4.17726e-22</iyz>
+          <izz>4.80664e-07</izz>
+        </inertia>
+      </inertial>
+      <collision name='rrw_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/rrw_link.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='rrw_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/rrw_link.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='rw_joint' type='revolute'>
+      <pose relative_to='base_link'>0 -0.26 0.055 1.5708 -0 3.14159</pose>
+      <parent>base_link</parent>
+      <child>rw_link</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='rw_link'>
+      <pose relative_to='rw_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 -0.027388 0 -0 0</pose>
+        <mass>1.34185</mass>
+        <inertia>
+          <ixx>0.00397939</ixx>
+          <ixy>-3.23473e-35</ixy>
+          <ixz>-1.80265e-21</ixz>
+          <iyy>0.00397939</iyy>
+          <iyz>-1.79851e-35</iyz>
+          <izz>0.00747908</izz>
+        </inertia>
+      </inertial>
+      <collision name='rw_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/rw_link.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='rw_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://amr_description/meshes/rw_link.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <plugin name='amr_controller' filename='libgazebo_ros_diff_drive.so'>
+      <commandTopic>cmd_vel</commandTopic>
+      <odometryTopic>odom_gazebo</odometryTopic>
+      <odometryFrame>odom_gazebo</odometryFrame>
+      <odometrySource>world</odometrySource>
+      <publishOdomTF>0</publishOdomTF>
+      <robotBaseFrame>base_link</robotBaseFrame>
+      <publishWheelTF>0</publishWheelTF>
+      <publishTf>1</publishTf>
+      <publishWheelJointState>1</publishWheelJointState>
+      <legacyMode>0</legacyMode>
+      <updateRate>30</updateRate>
+      <leftJoint>lw_joint</leftJoint>
+      <rightJoint>rw_joint</rightJoint>
+      <wheelSeparation>0.4</wheelSeparation>
+      <wheelDiameter>0.2</wheelDiameter>
+      <wheelAcceleration>1</wheelAcceleration>
+      <wheelTorque>10</wheelTorque>
+      <rosDebugLevel>na</rosDebugLevel>
+    </plugin>
+    <plugin name='differential_drive_controller' filename='libgazebo_ros_diff_drive.so'>
+      <alwaysOn>1</alwaysOn>
+      <updateRate>100</updateRate>
+      <leftJoint>lw_joint</leftJoint>
+      <rightJoint>rw_joint</rightJoint>
+      <wheelSeparation>0.5380</wheelSeparation>
+      <wheelDiameter>0.2410</wheelDiameter>
+      <torque>20</torque>
+      <commandTopic>cmd_vel</commandTopic>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <robotBaseFrame>base_link</robotBaseFrame>
+      <legacyMode>0</legacyMode>
+    </plugin>
+    <frame name='hokuyo_joint' attached_to='base_link'>
+      <pose>0.4 0.25 0.2 0 -0 0.7853</pose>
+    </frame>
+    <frame name='hokuyo_link' attached_to='hokuyo_joint'/>
+  </model>
+</sdf>

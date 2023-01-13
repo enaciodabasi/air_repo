@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+
+    <rosparam file="$(find amr_hardware_interface)/config/hardware_interface.yaml" command="load"></rosparam>
+
+    <node pkg="amr_hardware_interface" name="amr_hwi_node" type="amr_hwi_node" output="screen"></node>
+
+</launch>

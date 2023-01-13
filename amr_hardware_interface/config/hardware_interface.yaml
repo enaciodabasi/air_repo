@@ -1,0 +1,15 @@
+amr:
+  ads_config:
+    remote_ipv4: "1"
+    remote_net_id: "2"
+    local_adress:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+    port_num: 851
+
+  hardware_interface:
+    loop_hz: 50

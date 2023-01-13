@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+
+    <node pkg="amr_localization" name="amr_odom_server" type="amr_odom_server">
+
+        <rosparam command="load" file="$(find amr_localization)/param/amr_odom_params.yaml"></rosparam>
+
+    </node>
+
+    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se" clear_params="true">
+        <rosparam command="load" file="$(find amr_localization)/param/amr_ekf_params.yaml"></rosparam>
+        <!--<remap from="odometry/filtered" to=""></remap>
+        <remap from="accel/filtered" to=""></remap>-->
+        
+    </node>
+</launch>

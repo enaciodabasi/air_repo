@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+
+    <include file="$(find urg_node)/launch/urg_lidar.launch"></include>
+    <include file="$(find amr_mapping)/launch/amr_laser_scan_matcher.launch"></include>
+    <include file="$(find amr_mapping)/launch/amr_gmapping.launch"></include>
+
+</launch>

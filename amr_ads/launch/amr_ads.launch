@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<launch>
+
+    <node pkg="amr_ads" name="amr_ads" type="amr_ads.py"/> 
+
+</launch>
