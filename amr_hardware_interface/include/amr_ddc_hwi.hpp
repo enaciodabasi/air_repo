@@ -21,12 +21,12 @@ namespace amr
 {
     namespace controlled_hwi
     {
-
+        
         class HardwareInterface: public hardware_interface::RobotHW
         {
             public:
 
-            HardwareInterface(ros::NodeHandle& nh);
+            HardwareInterface(ros::NodeHandle& nh, bool use_ticks = true);
             ~HardwareInterface();
 
             void update(const ros::TimerEvent& timer_event);
@@ -34,6 +34,8 @@ namespace amr
             void write(ros::Duration& elapsed_time);
 
             private:
+
+            bool m_UseTicks;
 
             std::vector<std::string> m_JointNames;
 
