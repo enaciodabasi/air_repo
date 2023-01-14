@@ -16,6 +16,16 @@ amr:
 
       left_motor: "left_motor_symbol"
       right_motor: "right_motor_symbol"
+      
+      wheels:
+        left:
+          vel: ""
+          pos: ""
+        
+        right:
+          vel: ""
+          pos: ""
+
 
   hardware_interface:
     joints:
