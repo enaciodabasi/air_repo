@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+
+    <rosparam command="load" file="$(find amr_control)/config/amr_control.yaml"></rosparam>
+
+    <node 
+        name="controller_spawner" 
+        pkg="controller_manager" 
+        type="spawner" 
+        respawn="false"
+        output="screen"
+        ns="amr"
+        args="joint_state_controller amr_controller"
+    ></node>
+
+</launch>
