@@ -24,7 +24,7 @@ RvizWidget::RvizWidget(QWidget* parent)
     m_Map = m_VisManager->createDisplay("rviz/Map", "Map" ,true);
     m_Map->subProp("Topic")->setValue("/map");
 
-    m_VisManager->setFixedFrame("base_link");
+    m_VisManager->setFixedFrame("map");
 
     this->setLayout(m_MainLayout);
 }

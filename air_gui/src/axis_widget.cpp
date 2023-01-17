@@ -81,17 +81,27 @@ AxisWidget::~AxisWidget()
 void AxisWidget::onLinVelSliderChanged()
 {
     //qDebug() << m_LinearVelSlider->value();
-    m_LinearVelValue->setText(QString::fromStdString(std::to_string((double)(m_LinearVelSlider->value() / m_VelScalingFactor))));
+    double lin_x = (double)(m_LinearVelSlider->value()) / m_VelScalingFactor;
+    double ang_z = 0.0;
+    m_LinearVelValue->setText(QString::number(lin_x, 'f', 3));
+    m_CommsHandler->setVels(lin_x, ang_z);
+
 }
 
 void AxisWidget::onAngVelSliderChanged()
 {
-    m_AngularVelValue->setText(QString::fromStdString(std::to_string((double)(m_AngularVelSlider->value() / m_VelScalingFactor))));
+
+    double ang_z = (double)(m_AngularVelSlider->value() / m_VelScalingFactor);
+    double lin_x = (double)(m_LinearVelSlider->value()) / m_VelScalingFactor;
+    m_AngularVelValue->setText(QString::number(ang_z, 'f', 3));
+
+    m_CommsHandler->setVels(lin_x, ang_z);
+
 }
 
 void AxisWidget::onVelSliderReleased()
 {
-    QObject* s = sender();
+    /* QObject* s = sender();
 
     if(s == m_LinearVelSlider)
     {
@@ -100,6 +110,8 @@ void AxisWidget::onVelSliderReleased()
     else if(s == m_AngularVelSlider)
     {
         m_AngularVelSlider->setValue(0);
-    }
+    } */
+
+    m_AngularVelSlider->setValue(0);
     
 }
