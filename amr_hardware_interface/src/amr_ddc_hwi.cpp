@@ -21,7 +21,12 @@ namespace amr
                     m_EncoderResolution
                 );
             }
-            
+
+            m_DriveStatusServer = m_NodeHandle.advertiseService(
+                "change_drive_status",
+                &HardwareInterface::callback_drive_status_change,
+                this
+            );
 
             m_AdsInterface = std::make_unique<io::ads_interface>(
                 m_AdsInfo.remote_ipv4,
@@ -103,8 +108,8 @@ namespace amr
                 std::weak_ptr<AdsDevice> routeWeakPtr =  m_AdsInterface->getRoute();
                 std::shared_ptr<AdsDevice> routeSharedPtr = routeWeakPtr.lock();
 
-                AdsVariable<double> leftMotorAds{*routeSharedPtr, m_SymbolNameMap["left_motor"]};
-                AdsVariable<double> rightMotorAds{*routeSharedPtr, m_SymbolNameMap["right_motor"]};
+                AdsVariable<double> leftMotorAds{*routeSharedPtr, m_SymbolNameMap.find("left_motor")->second};
+                AdsVariable<double> rightMotorAds{*routeSharedPtr, m_SymbolNameMap.find("right_motor")->second};
 
                 leftMotorAds = m_VelocityCommands[0];
                 rightMotorAds = m_VelocityCommands[1];
@@ -208,6 +213,38 @@ namespace amr
 
         }
 
+        bool HardwareInterface::callback_drive_status_change(std_srvs::SetBool::Request& request, std_srvs::SetBool::Response& response)
+        {
+
+            try
+            {
+                if(m_AdsInterface->getAdsState())
+                {
+                    std::weak_ptr<AdsDevice> routeWeakPtr = m_AdsInterface->getRoute();
+                    std::shared_ptr<AdsDevice> routeTempSharedPtr = routeWeakPtr.lock();
+
+                    AdsVariable<bool> disableDrives{*routeTempSharedPtr, m_SymbolNameMap.find("drive_status")->second};
+
+                    disableDrives = request.data;
+
+                    response.success = true;
+                }
+                
+            }
+            catch(const AdsException& ex)
+            {
+                std::cout << ex.what() << std::endl;
+                response.success = false;
+            }
+            catch(const std::system_error& ex)
+            {
+                std::cout << ex.what() << std::endl;
+                response.success = false;
+            }
+            
+            return true;
+        }
+
         void HardwareInterface::loadParams()
         {
             if(m_NodeHandle.hasParam("/amr/hardware_interface/joints"))
@@ -296,7 +333,7 @@ namespace amr
 
                 if(m_NodeHandle.hasParam("/amr/ads_config/symbols/left_encoder"))
                 {
-                    std::string tempStr;
+                std::string tempStr;
                     m_NodeHandle.getParam("/amr/ads_config/symbols/left_encoder", tempStr);
                     m_SymbolNameMap["left_encoder"] = tempStr;
                 }
@@ -307,7 +344,7 @@ namespace amr
                 }
                 if(m_NodeHandle.hasParam("/amr/ads_config/symbols/right_encoder"))
                 {
-                    std::string tempStr;
+                std::string tempStr;
                     m_NodeHandle.getParam("/amr/ads_config/symbols/right_encoder", tempStr);
                     m_SymbolNameMap["right_encoder"] = tempStr;
                 }
@@ -321,7 +358,7 @@ namespace amr
             {
                 if(m_NodeHandle.hasParam("/amr/ads_config/symbols/wheels/left/vel"))
                 {
-                     std::string tempStr;
+                    std::string tempStr;
                     m_NodeHandle.getParam("/amr/ads_config/symbols/wheels/left/vel", tempStr);
                     m_SymbolNameMap["left_wheel_vel"] = tempStr;
                 }
@@ -332,7 +369,7 @@ namespace amr
                 }
                 if(m_NodeHandle.hasParam("/amr/ads_config/symbols/wheels/left/pos"))
                 {
-                     std::string tempStr;
+                    std::string tempStr;
                     m_NodeHandle.getParam("/amr/ads_config/symbols/wheels/left/pos", tempStr);
                     m_SymbolNameMap["left_wheel_pos"] = tempStr;
                 }
@@ -343,7 +380,7 @@ namespace amr
                 }
                 if(m_NodeHandle.hasParam("/amr/ads_config/symbols/wheels/right/vel"))
                 {
-                     std::string tempStr;
+                    std::string tempStr;
                     m_NodeHandle.getParam("/amr/ads_config/symbols/wheels/right/vel", tempStr);
                     m_SymbolNameMap["right_wheel_vel"] = tempStr;
                 }
@@ -354,7 +391,7 @@ namespace amr
                 }
                 if(m_NodeHandle.hasParam("/amr/ads_config/symbols/wheels/right/pos"))
                 {
-                     std::string tempStr;
+                    std::string tempStr;
                     m_NodeHandle.getParam("/amr/ads_config/symbols/wheels/right/pos", tempStr);
                     m_SymbolNameMap["right_wheel_pos"] = tempStr;
                 }
@@ -365,6 +402,17 @@ namespace amr
                 }
             }
             
+            if(m_NodeHandle.hasParam("/amr/ads_config/symbols/drive_status"))
+            {
+                std::string tempStr;
+                m_NodeHandle.getParam("/amr/ads_config/symbols/drive_status", tempStr);
+                m_SymbolNameMap["drive_status"] = tempStr;
+            }
+            else
+            {
+                ROS_ERROR_NAMED("ADS configuration error", "Can't find symbol name for the drive status.");
+                ros::shutdown();
+            }
 
             if(m_NodeHandle.hasParam("/amr/ads_config/symbols/left_motor"))
             {

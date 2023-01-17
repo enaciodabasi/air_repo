@@ -10,6 +10,7 @@
 #include "axis_widget.hpp"
 #include "start_stop_widget.hpp"
 #include "manual_control_widget.hpp"
+#include "rviz_widget.hpp"
 
 class CentralWidget : public QWidget
 {
@@ -22,11 +23,15 @@ class CentralWidget : public QWidget
 
     private:
 
-    QVBoxLayout* m_MainLayout;
+    QVBoxLayout* m_ControlsLayout;
+
+    QHBoxLayout* m_MainLayout;
 
     AxisWidget* m_AxisWidget;
 
     StartStopWidget* m_StartStopWidget;
+
+    RvizWidget* m_RvizWidget;
 
     ManualControlWidget* m_ManualControlWidget;
 

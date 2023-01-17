@@ -3,6 +3,8 @@ project(air_gui)
 
 find_package(catkin REQUIRED COMPONENTS
     roscpp
+    rviz
+    geometry_msgs
 )
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
@@ -26,6 +28,8 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
 )
 
+
+
 add_executable(air_gui
     src/main.cpp
     src/main_window.cpp
@@ -34,12 +38,14 @@ add_executable(air_gui
     src/comms_handler.cpp
     src/start_stop_widget.cpp
     src/manual_control_widget.cpp
+    src/rviz_widget.cpp
     include/main_window.hpp
     include/central_widget.hpp
     include/axis_widget.hpp
     include/comms_handler.hpp
     include/start_stop_widget.hpp
     include/manual_control_widget.hpp
+    include/rviz_widget.hpp
 )
 target_link_libraries(
     air_gui

@@ -43,12 +43,12 @@ StartStopWidget::StartStopWidget(
 
 void StartStopWidget::onEnableDriveClicked()
 {
-    
+    m_CommsHandler->changeDriveStatus(true);
 }
 
 void StartStopWidget::onDisableDriveClicked()
 {
-
+    m_CommsHandler->changeDriveStatus(false);
 }
 
 RoundButton::RoundButton(

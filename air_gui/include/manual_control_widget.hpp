@@ -1,6 +1,8 @@
 #ifndef MANUAL_CONTROL_WIDGET_HPP
 #define MANUAL_CONTROL_WIDGET_HPP
 
+#include <ros/ros.h>
+
 #include <QWidget>
 #include <QObject>
 #include <QEvent>

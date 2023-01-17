@@ -6,6 +6,7 @@
 
 #include <ros/ros.h>
 #include <ros/time.h>
+#include <std_srvs/SetBool.h>
 #include <hardware_interface/robot_hw.h>
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/joint_command_interface.h>
@@ -55,6 +56,9 @@ namespace amr
 
             ros::NodeHandle m_NodeHandle;
 
+            ros::ServiceServer m_DriveStatusServer;
+            bool m_DriverStatus = true;
+
             ros::Timer m_Loop;
             double m_LoopFrequency = 50;
             
@@ -71,6 +75,8 @@ namespace amr
             std::unordered_map<std::string, std::string> m_SymbolNameMap;
 
             void loadParams();
+
+            bool callback_drive_status_change(std_srvs::SetBool::Request& request, std_srvs::SetBool::Response& response);
 
         };
     }

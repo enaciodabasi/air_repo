@@ -10,13 +10,16 @@ CentralWidget::CentralWidget(std::shared_ptr<CommsHandler>& comms_handler, QWidg
 
     m_ManualControlWidget = new ManualControlWidget(comms_handler);
 
-    m_MainLayout = new QVBoxLayout();
+    m_RvizWidget = new RvizWidget();
 
-    m_MainLayout->addWidget(m_StartStopWidget, 1);
+    m_ControlsLayout = new QVBoxLayout();
+    m_ControlsLayout->addWidget(m_StartStopWidget, 1);
+    m_ControlsLayout->addWidget(m_AxisWidget, 2);
+    m_ControlsLayout->addWidget(m_ManualControlWidget, 0);
 
-    m_MainLayout->addWidget(m_AxisWidget, 2);
-
-    m_MainLayout->addWidget(m_ManualControlWidget, 0);
+    m_MainLayout = new QHBoxLayout();
+    m_MainLayout->addLayout(m_ControlsLayout);
+    m_MainLayout->addWidget(m_RvizWidget);
 
     this->setLayout(m_MainLayout);
 

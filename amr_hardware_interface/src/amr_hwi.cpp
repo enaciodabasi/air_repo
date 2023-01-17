@@ -24,6 +24,12 @@ namespace amr
                 "odom_srv"
             );
 
+            m_DriveStatusServer = m_NodeHandle.advertiseService(
+                "change_drive_status",
+                &HardwareInterface::callback_drive_status_change,
+                this
+            );
+
             m_CmdVelSub = m_NodeHandle.subscribe(
                 "cmd_vel",
                 uint32_t(100),
@@ -59,8 +65,8 @@ namespace amr
                     std::weak_ptr<AdsDevice> routeWeakPtr = m_AdsInterface->getRoute();
                     std::shared_ptr<AdsDevice> routeTempSharedPtr = routeWeakPtr.lock();
 
-                    AdsVariable<double> adsLeftEncoder{*routeTempSharedPtr, ""};
-                    AdsVariable<double> adsRightEncoder{*routeTempSharedPtr, ""};
+                    AdsVariable<double> adsLeftEncoder{*routeTempSharedPtr, m_SymbolNameMap.find("left_encoder")->second};
+                    AdsVariable<double> adsRightEncoder{*routeTempSharedPtr, m_SymbolNameMap.find("right_encoder")->second};
 
                     left_encoder = adsLeftEncoder;
                     right_encoder = adsRightEncoder;
@@ -114,8 +120,8 @@ namespace amr
                     std::weak_ptr<AdsDevice> routeWeakPtr = m_AdsInterface->getRoute();
                     std::shared_ptr<AdsDevice> routeTempSharedPtr = routeWeakPtr.lock();
 
-                    AdsVariable<double> adsLinX{*routeTempSharedPtr, ""};
-                    AdsVariable<double> adsAngZ{*routeTempSharedPtr, ""};
+                    AdsVariable<double> adsLinX{*routeTempSharedPtr, m_SymbolNameMap.find("linear_vel")->second};
+                    AdsVariable<double> adsAngZ{*routeTempSharedPtr, m_SymbolNameMap.find("angular_vel")->second};
 
                     adsLinX = linear_x;
                     adsAngZ = angular_z;
@@ -133,6 +139,41 @@ namespace amr
 
             m_CommunicationMutex.unlock();
             ROS_INFO("Linear x: %f, Angular z: %f", linear_x, angular_z);            
+        }
+
+        bool HardwareInterface::callback_drive_status_change(std_srvs::SetBool::Request& request, std_srvs::SetBool::Response& response)
+        {
+            m_CommunicationMutex.lock();
+
+            try
+            {
+                if(m_AdsInterface->getAdsState())
+                {
+                    std::weak_ptr<AdsDevice> routeWeakPtr = m_AdsInterface->getRoute();
+                    std::shared_ptr<AdsDevice> routeTempSharedPtr = routeWeakPtr.lock();
+
+                    AdsVariable<bool> disableDrives{*routeTempSharedPtr, m_SymbolNameMap.find("drive_status")->second};
+
+                    disableDrives = request.data;
+
+                    response.success = true;
+                }
+                
+            }
+            catch(const AdsException& ex)
+            {
+                std::cout << ex.what() << std::endl;
+                response.success = false;
+            }
+            catch(const std::system_error& ex)
+            {
+                std::cout << ex.what() << std::endl;
+                response.success = false;
+            }
+
+            m_CommunicationMutex.unlock();
+            
+            return true;
         }
 
         void HardwareInterface::loadParams()
@@ -197,6 +238,65 @@ namespace amr
             else
             {
                 ROS_INFO("Loop freuency is not specified in the parameter server. Defaulting back to 50 Hz");
+            }
+
+            if(m_NodeHandle.hasParam("/amr/ads_config/symbols/left_encoder"))
+            {
+            std::string tempStr;
+                m_NodeHandle.getParam("/amr/ads_config/symbols/left_encoder", tempStr);
+                m_SymbolNameMap["left_encoder"] = tempStr;
+            }
+            else
+            {
+                ROS_ERROR_NAMED("ADS configuration error", "Can't find symbol name for the left encoder. Shutting down...");
+                ros::shutdown();
+            }
+            if(m_NodeHandle.hasParam("/amr/ads_config/symbols/right_encoder"))
+            {
+            std::string tempStr;
+                m_NodeHandle.getParam("/amr/ads_config/symbols/right_encoder", tempStr);
+                m_SymbolNameMap["right_encoder"] = tempStr;
+            }
+            else
+            {
+                ROS_ERROR_NAMED("ADS configuration error", "Can't find symbol name for the right encoder. Shutting down...");
+                ros::shutdown();
+            }
+
+            if(m_NodeHandle.hasParam("/amr/ads_config/symbols/drive_status"))
+            {
+                std::string tempStr;
+                m_NodeHandle.getParam("/amr/ads_config/symbols/drive_status", tempStr);
+                m_SymbolNameMap["drive_status"] = tempStr;
+            }
+            else
+            {
+                ROS_ERROR_NAMED("ADS configuration error", "Can't find symbol name for the drive status.");
+                ros::shutdown();
+            }
+
+            if(m_NodeHandle.hasParam("/amr/ads_config/symbols/angular_vel"))
+            {
+                std::string tempStr;
+                m_NodeHandle.getParam("/amr/ads_config/symbols/angular_vel", tempStr);
+                m_SymbolNameMap["angular_vel"] = tempStr;
+            }
+            else
+            {
+                ROS_ERROR_NAMED("ADS configuration error", "Can't find symbol name for the left motor. Shutting down...");
+                ros::shutdown();
+            }
+            
+            if(m_NodeHandle.hasParam("/amr/ads_config/symbols/linear_vel"))
+            {
+                std::string tempStr;
+                m_NodeHandle.getParam("/amr/ads_config/symbols/linear_vel", tempStr);
+                m_SymbolNameMap["linear_vel"] = tempStr;
+            }
+            else
+            {
+                ROS_ERROR_NAMED("ADS configuration error", "Can't find symbol name for the right motor. Shutting down...");
+                ros::shutdown();
             }
         }
 

@@ -4,6 +4,7 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/Point.h>
+#include <std_srvs/SetBool.h>
 #include "amr_custom_interfaces/OdomSrv.h"
 
 #include "AdsDevice.h"
@@ -11,6 +12,7 @@
 #include "AdsVariable.h"
 
 #include <memory>
+#include <unordered_map>
 #include <mutex>
 
 #include "io_ads.hpp"
@@ -34,6 +36,8 @@ namespace amr
 
             ros::NodeHandle m_NodeHandle;
 
+            ros::ServiceServer m_DriveStatusServer;
+
             ros::ServiceClient m_OdomClient;
             
             // Subscribes to the cmd_vel topic
@@ -45,6 +49,8 @@ namespace amr
             ros::Timer m_NonRealTimeLoop;
 
             std::unique_ptr<io::ads_interface> m_AdsInterface;
+
+            std::unordered_map<std::string, std::string> m_SymbolNameMap;
 
             std::string m_RemoteIPv4;
 
@@ -64,10 +70,12 @@ namespace amr
 
             void callback_cmd_vel(const geometry_msgs::TwistConstPtr& twist_msg);
 
+            bool callback_drive_status_change(std_srvs::SetBool::Request& request, std_srvs::SetBool::Response& response);
+
             void loadParams();
 
         };
-        }
+    }
     
 }
 

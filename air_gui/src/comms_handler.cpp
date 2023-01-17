@@ -7,6 +7,8 @@ CommsHandler::CommsHandler(ros::NodeHandle& nh)
         "cmd_vel",
         10
     );
+
+    m_DriveStatusClient = m_NodeHandle.serviceClient<std_srvs::SetBool>("change_drive_status");
 }
 
 void CommsHandler::setVels(double linear_x, double angular_z)
@@ -29,4 +31,17 @@ void CommsHandler::createAndPublishTwist(double linear_x, double angular_z)
 
     m_TwistPublisher.publish(velCmd);
 
+}
+
+bool CommsHandler::changeDriveStatus(bool new_drive_status)
+{
+    std_srvs::SetBool setBoolSrv;
+    setBoolSrv.request.data = new_drive_status;
+    
+    if(m_DriveStatusClient.call(setBoolSrv))
+    {   
+        return true;
+    }
+
+    return false;
 }
