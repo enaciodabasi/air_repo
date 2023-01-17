@@ -6,6 +6,7 @@
 #include <QSlider>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QLineEdit>
 #include <QFormLayout>
 #include <QLabel>
 
@@ -33,8 +34,21 @@ class AxisWidget : public QWidget
     
     QSlider* m_AngularVelSlider;
 
+    QLineEdit* m_LinearVelValue;
 
+    QLineEdit* m_AngularVelValue;
 
+    const double m_VelScalingFactor = 1000.0;
+
+    private: // Private member functions:
+
+    void onLinVelSliderChanged();
+
+    void onAngVelSliderChanged();
+
+    void onVelSliderReleased();
+
+    
 
 };
 

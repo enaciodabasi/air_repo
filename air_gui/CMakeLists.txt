@@ -32,10 +32,14 @@ add_executable(air_gui
     src/central_widget.cpp
     src/axis_widget.cpp
     src/comms_handler.cpp
+    src/start_stop_widget.cpp
+    src/manual_control_widget.cpp
     include/main_window.hpp
     include/central_widget.hpp
     include/axis_widget.hpp
     include/comms_handler.hpp
+    include/start_stop_widget.hpp
+    include/manual_control_widget.hpp
 )
 target_link_libraries(
     air_gui

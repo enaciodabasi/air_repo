@@ -8,6 +8,8 @@
 
 #include "comms_handler.hpp"
 #include "axis_widget.hpp"
+#include "start_stop_widget.hpp"
+#include "manual_control_widget.hpp"
 
 class CentralWidget : public QWidget
 {
@@ -20,10 +22,13 @@ class CentralWidget : public QWidget
 
     private:
 
-    QHBoxLayout* m_MainLayout;
+    QVBoxLayout* m_MainLayout;
 
     AxisWidget* m_AxisWidget;
 
+    StartStopWidget* m_StartStopWidget;
+
+    ManualControlWidget* m_ManualControlWidget;
 
 };
 
