@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
     <param name="use_sim_time" value="false"></param>
-    <node>
+    <node pkg="gmapping" type="slam_gmapping" name="gmapping_node" output="log">
         <param name="max_update_interval" value="2.0"></param>
         <param name="maxUrange" value="29.0"></param>
         <param name="sigma" value="0.05"></param>
