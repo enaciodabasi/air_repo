@@ -10,7 +10,6 @@
         type="spawner" 
         respawn="false"
         output="screen"
-        ns="amr"
         args="joint_state_controller amr_controller"
     ></node>
 

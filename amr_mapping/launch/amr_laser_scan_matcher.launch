@@ -4,7 +4,6 @@
     <arg name="IS_TWISTSTAMPED" default="true" />
     <arg name="use_rviz" default="false" />
     <arg name="publish_covariance" default="false"/>
-    #### set up data playback from bag #############################
   
     <param name="/use_sim_time" value="false"/>
     <param name="/stamped_vel" value="$(arg IS_TWISTSTAMPED)"/>
@@ -17,14 +16,12 @@
     <node pkg="rosbag" type="play" name="play"
       args="$(find laser_scan_matcher)/demo/demo.bag -delay=5 -clock"/>
   -->
-    #### publish an example base_link -> laser transform ###########
   <!--
     <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser"
       args="0.332 0.252 0.0 0.785 0.0 0.0 /base_link /laser 40" />
   -->
     <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser"
       args="0.332 -0.260 0.0 -0.785 0.0 0.0 /base_link /laser 100" />
-    #### start the laser scan_matcher ##############################
   
     <group if="$(arg publish_covariance)">
       <param name="laser_scan_matcher_node/do_compute_covariance" value="1"/>

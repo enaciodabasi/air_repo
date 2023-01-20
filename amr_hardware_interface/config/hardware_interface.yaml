@@ -29,8 +29,8 @@ amr:
 
   hardware_interface:
     joints:
-    - "left_wheel_joint_name"
-    - "right_wheel_joint_name"
+    - "lw_joint"
+    - "rw_joint"
     loop_hz: 50
     encoders:
       resolution: 18
