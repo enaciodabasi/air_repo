@@ -11,6 +11,7 @@
 #include "start_stop_widget.hpp"
 #include "manual_control_widget.hpp"
 #include "rviz_widget.hpp"
+#include "system_diagnostics_widget.hpp"
 
 class CentralWidget : public QWidget
 {
@@ -34,6 +35,8 @@ class CentralWidget : public QWidget
     RvizWidget* m_RvizWidget;
 
     ManualControlWidget* m_ManualControlWidget;
+
+    SystemDiagnosticsWidget* m_SystemDiagnosticsWidget;
 
 };
 

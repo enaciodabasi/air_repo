@@ -17,9 +17,12 @@ CentralWidget::CentralWidget(std::shared_ptr<CommsHandler>& comms_handler, QWidg
     m_ControlsLayout->addWidget(m_AxisWidget, 2);
     m_ControlsLayout->addWidget(m_ManualControlWidget, 0);
 
+    m_SystemDiagnosticsWidget = new SystemDiagnosticsWidget();
+
     m_MainLayout = new QHBoxLayout();
     m_MainLayout->addLayout(m_ControlsLayout);
     m_MainLayout->addWidget(m_RvizWidget);
+    m_MainLayout->addWidget(m_SystemDiagnosticsWidget);
 
     this->setLayout(m_MainLayout);
 

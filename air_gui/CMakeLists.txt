@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
+find_package(yaml-cpp REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -39,6 +40,7 @@ add_executable(air_gui
     src/start_stop_widget.cpp
     src/manual_control_widget.cpp
     src/rviz_widget.cpp
+    src/system_diagnostics_widget.cpp
     include/main_window.hpp
     include/central_widget.hpp
     include/axis_widget.hpp
@@ -46,15 +48,18 @@ add_executable(air_gui
     include/start_stop_widget.hpp
     include/manual_control_widget.hpp
     include/rviz_widget.hpp
+    include/system_diagnostics_widget.hpp
 )
 target_link_libraries(
     air_gui
     ${catkin_LIBRARIES}
     Qt5::Core
     Qt5::Widgets
+    ${YAML_CPP_LIBRARIES}
 )
 target_link_directories(
     air_gui
     PUBLIC
     ${catkin_INCLUDE_DIRS}
+    ${YAML_CPP_INCLUDE_DIRS}
 )
