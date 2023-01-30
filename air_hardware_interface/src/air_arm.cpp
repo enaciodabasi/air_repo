@@ -11,4 +11,12 @@ namespace air
         m_JointVelocities.resize(m_NumOfJoints);
         m_JointEfforts.resize(m_NumOfJoints);
     };
+
+    Arm::Arm(
+        const std::vector<std::string>& joint_names,
+        std::shared_ptr<AdsDevice>& route_shared_ptr
+    )   : m_RouteWeakPtr{route_shared_ptr}
+    {
+        
+    }
 }

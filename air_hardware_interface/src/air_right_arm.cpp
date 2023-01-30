@@ -17,5 +17,23 @@ namespace air
         : Arm(joint_names)
     {
         
-    }    
+    }
+
+    RightArm::RightArm(
+        const std::vector<std::string>& joint_names,
+        std::shared_ptr<AdsDevice>& route_shared_ptr
+    )   : Arm(joint_names, route_shared_ptr)
+    {
+            
+    }
+
+    void RightArm::write()
+    {
+
+    }   
+
+    void RightArm::read()
+    {
+
+    } 
 }

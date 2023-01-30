@@ -54,6 +54,8 @@ namespace air
 
             RobotParams loadRobotParams();
 
+            io::AdsInfo loadAdsParams();
+
         };
     }
 }

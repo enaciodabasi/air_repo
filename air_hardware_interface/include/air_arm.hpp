@@ -13,9 +13,12 @@
 #define AIR_ARM_HPP
 
 #include <iostream>
+#include <memory>
 
 #include <ros/ros.h>
 #include <hardware_interface/joint_state_interface.h>
+
+#include "ads_interface.hpp"
 
 namespace air
 {
@@ -25,11 +28,23 @@ namespace air
 
         Arm(const std::vector<std::string>& joint_names);
 
+        Arm(
+            const std::vector<std::string>& joint_names,
+            std::shared_ptr<AdsDevice>& route_shared_ptr
+        );
+
         virtual ~Arm();
+
+        inline void setAdsDeviceWeakPtr(std::shared_ptr<AdsDevice>& route_shared_ptr)
+        {
+            m_RouteWeakPtr = route_shared_ptr;
+        }
 
         protected:
         
         std::vector<std::string> m_JointNames;
+
+        std::weak_ptr<AdsDevice> m_RouteWeakPtr;
 
         uint8_t m_NumOfJoints;
 
@@ -38,6 +53,10 @@ namespace air
         std::vector<double> m_JointVelocities;
 
         std::vector<double> m_JointEfforts;        
+
+        virtual void write() = 0;
+
+        virtual void read() = 0;
 
     };
 

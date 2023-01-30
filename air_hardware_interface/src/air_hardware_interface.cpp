@@ -42,11 +42,32 @@ namespace air
 
                 m_PosVelJointInterface.registerHandle(posVelJointHandle);
             }
-            int j = 0;
-            for(int i = m_RightArm->m_NumOfJoints - 1; i < m_TotalNumberOfJoints; i++)
-            {
 
+            int j = 0;
+            while(j < m_LeftArm->m_NumOfJoints)
+            {
+                hardware_interface::JointStateHandle jointStateHandle(
+                    m_LeftArm->m_JointNames[j],
+                    &m_LeftArm->m_JointPositions[j],
+                    &m_LeftArm->m_JointVelocities[j],
+                    &m_LeftArm->m_JointEfforts[j]
+                );
+
+                m_JointStateInterface.registerHandle(jointStateHandle);
+
+                hardware_interface::PosVelJointHandle posVelJointHandle(
+                    jointStateHandle,
+                    &m_LeftArm->m_PosCmds[j],
+                    &m_LeftArm->m_VelCmds[j]
+                );
+
+                m_PosVelJointInterface.registerHandle(posVelJointHandle);
+
+                j += 1;
             }
+
+            this->registerInterface(&m_JointStateInterface);
+            this->registerInterface(&m_PosVelJointInterface);
 
         }
 

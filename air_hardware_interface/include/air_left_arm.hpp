@@ -28,10 +28,20 @@ namespace air
 
         LeftArm(const std::vector<std::string>& joint_names);
 
+        LeftArm(
+            const std::vector<std::string>& joint_names,
+            std::shared_ptr<AdsDevice>& route_shared_ptr
+        );
+
         private:
 
         std::vector<double> m_PosCmds;
+
         std::vector<double> m_VelCmds;
+
+        void write() override;
+
+        void read() override;
 
     };
 }

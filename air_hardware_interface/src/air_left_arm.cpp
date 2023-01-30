@@ -1,6 +1,6 @@
 /**
  * @file air_left_arm.cpp
- * @author your name (you@domain.com)
+ * @author Eren Naci Odabasi (enaciodabasi@outlook.com)
  * @brief 
  * @version 0.1
  * @date 2023-01-30
@@ -18,4 +18,22 @@ namespace air
     {
 
     }
+
+    LeftArm::LeftArm(
+        const std::vector<std::string>& joint_names,
+        std::shared_ptr<AdsDevice>& route_shared_ptr
+    )   : Arm(joint_names, route_shared_ptr)
+    {
+            
+    }
+
+    void LeftArm::write()
+    {
+
+    }   
+
+    void LeftArm::read()
+    {
+        
+    } 
 }
