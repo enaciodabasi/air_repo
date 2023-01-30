@@ -118,7 +118,7 @@ namespace amr
             else
             {
                 ROS_INFO("Couldn't find wheel radius in the parameter server. Defaulting back to 0.1");
-                m_WheelRadius = 0.1;
+                m_WheelRadius = 0.2;
             }
 
             if(m_NodeHandle.hasParam("/amr/wheel/base"))

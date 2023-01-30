@@ -12,6 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
     controller_manager
 )
 
+find_library(ADSLIB REQUIRED)
+
 
 catkin_package(
     INCLUDE_DIRS
@@ -24,20 +26,20 @@ catkin_package(
 )
 
 
-add_library(ADSLIB
-${AdsLib_INCLUDE_DIRS}/standalone/AdsLib.cpp
-${AdsLib_INCLUDE_DIRS}/standalone/AmsConnection.cpp
-${AdsLib_INCLUDE_DIRS}/standalone/AmsNetId.cpp
-${AdsLib_INCLUDE_DIRS}/standalone/AmsPort.cpp
-${AdsLib_INCLUDE_DIRS}/standalone/AmsRouter.cpp
-${AdsLib_INCLUDE_DIRS}/standalone/NotificationDispatcher.cpp
-${AdsLib_INCLUDE_DIRS}/AdsDef.cpp
-${AdsLib_INCLUDE_DIRS}/AdsDevice.cpp
-${AdsLib_INCLUDE_DIRS}/AdsFile.cpp
-${AdsLib_INCLUDE_DIRS}/Log.cpp
-${AdsLib_INCLUDE_DIRS}/Sockets.cpp
-${AdsLib_INCLUDE_DIRS}/Frame.cpp
-)
+#add_library(ADSLIB
+#${AdsLib_INCLUDE_DIRS}/standalone/AdsLib.cpp
+#${AdsLib_INCLUDE_DIRS}/standalone/AmsConnection.cpp
+#${AdsLib_INCLUDE_DIRS}/standalone/AmsNetId.cpp
+#${AdsLib_INCLUDE_DIRS}/standalone/AmsPort.cpp
+#${AdsLib_INCLUDE_DIRS}/standalone/AmsRouter.cpp
+#${AdsLib_INCLUDE_DIRS}/standalone/NotificationDispatcher.cpp
+#${AdsLib_INCLUDE_DIRS}/AdsDef.cpp
+#${AdsLib_INCLUDE_DIRS}/AdsDevice.cpp
+#${AdsLib_INCLUDE_DIRS}/AdsFile.cpp
+#${AdsLib_INCLUDE_DIRS}/Log.cpp
+#${AdsLib_INCLUDE_DIRS}/Sockets.cpp
+#${AdsLib_INCLUDE_DIRS}/Frame.cpp
+#)
 
 include_directories(
   include
