@@ -1,5 +1,7 @@
 #include "../include/amr_hwi.hpp"
 
+#include <iostream>
+
 namespace amr
 {
            
@@ -21,9 +23,15 @@ namespace amr
             m_AdsInterface->updateState();
 
             m_OdomClient = m_NodeHandle.serviceClient<amr_custom_interfaces::OdomSrv>(
-                "odom_srv"
+                "odom_server"
             );
 
+            if(!m_OdomClient.waitForExistence(ros::Duration(3)))
+            {
+                ROS_ERROR("Can't connect to Odometry Server. Shutting down ROS.");
+                if(ros::ok())
+                    ros::shutdown();
+            }
             m_DriveStatusServer = m_NodeHandle.advertiseService(
                 "change_drive_status",
                 &HardwareInterface::callback_drive_status_change,
@@ -41,6 +49,8 @@ namespace amr
             m_OdomPub = m_NodeHandle.advertise<nav_msgs::Odometry>("wheel_odom", 10);
 
             ros::Duration updateFreq = ros::Duration(1.0 / m_LoopFrequency);
+
+            
 
             m_NonRealTimeLoop = m_NodeHandle.createTimer(
                updateFreq,
@@ -85,8 +95,7 @@ namespace amr
             geometry_msgs::Point encoders_lr;
             encoders_lr.x = left_encoder;
             encoders_lr.y = right_encoder;
- 
-            m_CommunicationMutex.unlock();
+
 
             ROS_INFO("x: %f ; y: %f", encoders_lr.x, encoders_lr.y);
 
@@ -102,6 +111,8 @@ namespace amr
             {
                 ROS_WARN("Could not calculate odometry");
             }
+
+            m_CommunicationMutex.unlock();
 
         }
 
@@ -122,6 +133,8 @@ namespace amr
 
                     AdsVariable<double> adsLinX{*routeTempSharedPtr, m_SymbolNameMap.find("linear_vel")->second};
                     AdsVariable<double> adsAngZ{*routeTempSharedPtr, m_SymbolNameMap.find("angular_vel")->second};
+
+                    ROS_INFO("ROS TWIST: X: %f Z: %f", linear_x, angular_z);
 
                     adsLinX = linear_x;
                     adsAngZ = angular_z;
@@ -242,8 +255,10 @@ namespace amr
 
             if(m_NodeHandle.hasParam("/amr/ads_config/symbols/left_encoder"))
             {
-            std::string tempStr;
+                std::string tempStr;
+                
                 m_NodeHandle.getParam("/amr/ads_config/symbols/left_encoder", tempStr);
+                ROS_INFO(tempStr.c_str());
                 m_SymbolNameMap["left_encoder"] = tempStr;
             }
             else
@@ -253,8 +268,10 @@ namespace amr
             }
             if(m_NodeHandle.hasParam("/amr/ads_config/symbols/right_encoder"))
             {
-            std::string tempStr;
+                std::string tempStr;
+                
                 m_NodeHandle.getParam("/amr/ads_config/symbols/right_encoder", tempStr);
+                ROS_INFO(tempStr.c_str());
                 m_SymbolNameMap["right_encoder"] = tempStr;
             }
             else
@@ -266,7 +283,9 @@ namespace amr
             if(m_NodeHandle.hasParam("/amr/ads_config/symbols/drive_status"))
             {
                 std::string tempStr;
+                
                 m_NodeHandle.getParam("/amr/ads_config/symbols/drive_status", tempStr);
+                ROS_INFO(tempStr.c_str());
                 m_SymbolNameMap["drive_status"] = tempStr;
             }
             else
@@ -278,7 +297,9 @@ namespace amr
             if(m_NodeHandle.hasParam("/amr/ads_config/symbols/angular_vel"))
             {
                 std::string tempStr;
+                
                 m_NodeHandle.getParam("/amr/ads_config/symbols/angular_vel", tempStr);
+                ROS_INFO(tempStr.c_str());
                 m_SymbolNameMap["angular_vel"] = tempStr;
             }
             else
@@ -290,7 +311,9 @@ namespace amr
             if(m_NodeHandle.hasParam("/amr/ads_config/symbols/linear_vel"))
             {
                 std::string tempStr;
+                
                 m_NodeHandle.getParam("/amr/ads_config/symbols/linear_vel", tempStr);
+                ROS_INFO(tempStr.c_str());
                 m_SymbolNameMap["linear_vel"] = tempStr;
             }
             else
