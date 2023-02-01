@@ -15,10 +15,10 @@
 #include <ros/ros.h>
 
 #include "air_arm.hpp"
-#include "air_hardware_interface.hpp"
 
 namespace air
 {   
+    namespace hwi{class AirHardwareInterface;}
     namespace kinematics
     {
 
@@ -45,19 +45,19 @@ namespace air
 
             // Arm Constants
 
-            static const double X1  {-28.11};
-            static const double Y1  { 28.46};
-            static const double X2  {-28.46};
-            static const double Y2  {-28.11};
-            static const double Z   { 22.5};
-            static const double Zz  { 184.5};
+            static constexpr double X1  {-28.11};
+            static constexpr double Y1  { 28.46};
+            static constexpr double X2  {-28.46};
+            static constexpr double Y2  {-28.11};
+            static constexpr double Z   { 22.5};
+            static constexpr double Zz  { 184.5};
         };
     }
 
     class RightArm : public Arm
     {
         public:
-
+        
         friend class hwi::AirHardwareInterface;
 
         RightArm(const std::vector<std::string>& joint_names);

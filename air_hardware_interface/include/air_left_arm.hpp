@@ -16,10 +16,10 @@
 #include <ros/ros.h>
 
 #include "air_arm.hpp"
-#include "air_hardware_interface.hpp"
 
 namespace air
-{
+{   
+    namespace hwi{class AirHardwareInterface;}
     class LeftArm : public Arm
     {
         public:

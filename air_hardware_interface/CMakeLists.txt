@@ -48,7 +48,19 @@ add_executable(air_right_arm_hw_interface_node
     src/air_arm_hardware_interface.cpp
     src/air_right_arm_interface.cpp
     ${ads_SRC}
-    )
+)
 
 target_link_libraries(air_right_arm_hw_interface_node ${catkin_LIBRARIES} ADSLIB)
 target_link_directories(air_right_arm_hw_interface_node PUBLIC ${AdsLib_INCLUDE_DIRS})
+
+add_executable(air_hardware_interface_node
+    src/air_hardware_interface.cpp
+    src/air_arm.cpp
+    src/air_right_arm.cpp
+    src/air_left_arm.cpp
+    src/ads_interface.cpp
+)
+target_link_libraries(air_hardware_interface_node ${catkin_LIBRARIES} ADSLIB)
+target_link_directories(air_hardware_interface_node PUBLIC ${AdsLib_INCLUDE_DIRS})
+
+

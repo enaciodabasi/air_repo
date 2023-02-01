@@ -27,11 +27,11 @@ namespace air
             );
 
             m_RightArm = new RightArm(robotParams.jointNamesRightArm);
-            auto* p = &loadSymbols("right_arm");
-            m_RightArm->init_ads_symbol_map(p->first, p->second);
+            auto p = loadSymbols("right_arm");
+            m_RightArm->init_ads_symbol_map(p.first, p.second);
             m_LeftArm = new LeftArm(robotParams.jointNamesLeftArm);
-            p = &loadSymbols("left_arm");
-            m_LeftArm->init_ads_symbol_map(p->first, p->second);
+            p = loadSymbols("left_arm");
+            m_LeftArm->init_ads_symbol_map(p.first, p.second);
 
             m_TotalNumberOfJoints = (int)m_RightArm->m_NumOfJoints + (int)m_LeftArm->m_NumOfJoints;
 
@@ -93,6 +93,11 @@ namespace air
                 this
             );
 
+        }
+
+        AirHardwareInterface::~AirHardwareInterface()
+        {
+            
         }
 
         void AirHardwareInterface::update(const ros::TimerEvent& te)
@@ -345,4 +350,20 @@ namespace air
             
         }
     }
+}
+
+int main(int argc, char** argv)
+{
+    ros::init(argc, argv, "air_hardware_interface_node");
+    
+    ros::NodeHandle nh;
+
+    ros::AsyncSpinner spinner(2);
+    spinner.start();
+
+    air::hwi::AirHardwareInterface airHwi(nh);
+
+    ros::waitForShutdown();
+
+    return 0;
 }

@@ -35,7 +35,7 @@ namespace air
             std::shared_ptr<AdsDevice>& route_shared_ptr
         );
 
-        virtual ~Arm();
+        virtual ~Arm(){};
 
         inline void setAdsDeviceWeakPtr(std::shared_ptr<AdsDevice>& route_shared_ptr)
         {

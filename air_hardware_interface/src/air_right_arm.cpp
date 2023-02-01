@@ -14,7 +14,10 @@
 #include <cmath>
 
 namespace air
-{
+{   
+
+    namespace hwi{}
+
     RightArm::RightArm(const std::vector<std::string>& joint_names)
         : Arm(joint_names)
     {
