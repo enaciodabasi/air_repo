@@ -133,7 +133,7 @@ namespace air
             for(std::size_t i = 0; i < actJointStates_L.position.size(); i++)
             {
                 m_LeftArm->m_JointPositions.at(i) = actJointStates_L.position.at(i);
-                m_LeftArm->m_JointVelocities.at(i) = actJointStates_R.velocity.at(i);
+                m_LeftArm->m_JointVelocities.at(i) = actJointStates_L.velocity.at(i);
             }
         }
 
