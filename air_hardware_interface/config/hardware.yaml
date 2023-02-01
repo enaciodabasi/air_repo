@@ -1,11 +1,39 @@
-arm:
+air_arm:
   hardware_interface:
     loop_hz: 50
     joints:
-      - s1j
-      - s2j
-      - s3j
-      - ej
-      - rollj
-      - pitchj
-      - yawj
+      right_arm:
+        - s1j
+        - s2j
+        - s3j
+        - ej
+        - rollj
+        - pitchj
+        - yawj
+      left_arm:
+        -
+        -
+ads_config:
+  remote_ipv4:
+  remote_net_id:
+  local_adress:
+  port_num:
+  symbols:
+    right_arm:
+      goal_pos:
+      goal_vel:
+      act_pos:
+      act_vel:
+      act_time:
+      last_time:
+      halt:
+      timeout:
+    left_arm:
+      goal_pos:
+      goal_vel:
+      act_pos:
+      act_vel:
+      act_time:
+      last_time:
+      halt:
+      timeout:
