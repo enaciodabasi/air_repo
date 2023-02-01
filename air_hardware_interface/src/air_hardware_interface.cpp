@@ -110,12 +110,31 @@ namespace air
 
         void AirHardwareInterface::write(const ros::Duration& elapsed_time)
         {
+            m_RightArm->write(
+                m_RightArm->m_PosCmds,
+                m_RightArm->m_VelCmds
+            );
+
+            // Write to left arm:
 
         }
 
         void AirHardwareInterface::read()
         {
-            
+            auto actJointStates_R = m_RightArm->read();
+            auto actJointStates_L = m_LeftArm->read();
+
+            for(std::size_t i = 0; i < actJointStates_R.position.size(); i++)
+            {
+                m_RightArm->m_JointPositions.at(i) = actJointStates_R.position.at(i);
+                m_RightArm->m_JointVelocities.at(i) = actJointStates_R.velocity.at(i);
+            }
+
+            for(std::size_t i = 0; i < actJointStates_L.position.size(); i++)
+            {
+                m_LeftArm->m_JointPositions.at(i) = actJointStates_L.position.at(i);
+                m_LeftArm->m_JointVelocities.at(i) = actJointStates_R.velocity.at(i);
+            }
         }
 
 
