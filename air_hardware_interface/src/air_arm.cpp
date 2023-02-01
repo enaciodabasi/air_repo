@@ -19,4 +19,15 @@ namespace air
     {
         
     }
+
+    void Arm::init_ads_symbol_map(
+        const std::vector<std::string>& names,
+        const std::vector<std::string>& symbols
+    )
+    {
+        for(std::size_t i = 0; i < names.size(); i++)
+        {
+            m_AdsSymbolMap[names.at(i)] = symbols.at(i);
+        }
+    }
 }

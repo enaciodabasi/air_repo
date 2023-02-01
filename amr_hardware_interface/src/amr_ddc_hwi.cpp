@@ -317,7 +317,7 @@ namespace amr
             }
             else
             {
-                ROS_INFO("Loop freuency is not specified in the parameter server. Defaulting back to 50 Hz");
+                ROS_INFO("Loop freuqency is not specified in the parameter server. Defaulting back to 50 Hz");
             }
             if(m_UseTicks)
             {

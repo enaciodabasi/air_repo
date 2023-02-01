@@ -14,9 +14,11 @@
 
 #include <iostream>
 #include <memory>
+#include <unordered_map>
 
 #include <ros/ros.h>
 #include <hardware_interface/joint_state_interface.h>
+#include <sensor_msgs/JointState.h>
 
 #include "ads_interface.hpp"
 
@@ -54,9 +56,16 @@ namespace air
 
         std::vector<double> m_JointEfforts;        
 
-        virtual void write() = 0;
+        std::unordered_map<std::string, std::string> m_AdsSymbolMap;
 
-        virtual void read() = 0;
+        virtual void write(const std::vector<double>& pos, const std::vector<double>& vel) = 0;
+
+        virtual sensor_msgs::JointState read() = 0;
+
+        virtual void init_ads_symbol_map(
+            const std::vector<std::string>& names,
+            const std::vector<std::string>& symbols
+        );
 
     };
 

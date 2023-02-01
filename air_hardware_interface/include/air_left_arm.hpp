@@ -39,9 +39,9 @@ namespace air
 
         std::vector<double> m_VelCmds;
 
-        void write() override;
+        void write(const std::vector<double>& pos, const std::vector<double>& vel) override;
 
-        void read() override;
+        sensor_msgs::JointState read() override;
 
     };
 }

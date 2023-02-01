@@ -27,12 +27,12 @@ namespace air
             
     }
 
-    void LeftArm::write()
+    void LeftArm::write(const std::vector<double>& pos, const std::vector<double>& vel)
     {
 
     }   
 
-    void LeftArm::read()
+    sensor_msgs::JointState LeftArm::read()
     {
         
     } 
