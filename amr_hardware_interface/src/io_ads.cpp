@@ -20,7 +20,7 @@ namespace amr
                 m_LocaleAddr[5]
             };
 
-            bhf::ads::SetLocalAddress(localAddr);
+            //bhf::ads::SetLocalAddress(localAddr);
 
             m_RemoteNetId = new AmsNetId(m_RemoteNetIdStr);
 

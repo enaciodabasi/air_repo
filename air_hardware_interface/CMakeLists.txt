@@ -6,6 +6,7 @@ find_package(catkin REQUIRED COMPONENTS
     hardware_interface
     roscpp    
 )
+
 set(AdsLib_INCLUDE_DIRS /home/$ENV{USER}/ADS/AdsLib/) 
 catkin_package(
     INCLUDE_DIRS

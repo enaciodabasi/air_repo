@@ -50,8 +50,6 @@ namespace amr
 
             ros::Duration updateFreq = ros::Duration(1.0 / m_LoopFrequency);
 
-            
-
             m_NonRealTimeLoop = m_NodeHandle.createTimer(
                updateFreq,
                &HardwareInterface::update,
@@ -66,7 +64,7 @@ namespace amr
             m_AdsInterface->updateState();
             double left_encoder = 0.0;
             double right_encoder = 0.0;
-
+            ROS_INFO("UPDATE");
             m_CommunicationMutex.lock();
             try
             {
@@ -138,6 +136,9 @@ namespace amr
 
                     adsLinX = linear_x;
                     adsAngZ = angular_z;
+                }
+                else{
+                    ROS_WARN("ADS OFFLINE");
                 }
                 
             }

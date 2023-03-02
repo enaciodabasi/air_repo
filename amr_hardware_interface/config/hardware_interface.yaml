@@ -1,13 +1,13 @@
 amr:
   ads_config:
     #remote_ipv4: "172.34.6.72"
-    remote_ipv4: "169.254.71.135"
+    remote_ipv4: "192.168.6.2" # 186 54
     remote_net_id: "172.18.212.67.1.1"
     local_adress:
-      - 172
-      - 34
-      - 6
-      - 69
+      - 127
+      - 0
+      - 0
+      - 0
       - 1
       - 1
     port_num: 851
