@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(amr_hardware_interface)
+
+set(CMAKE_CXX_STANDARD 17)
+
 set(AdsLib_INCLUDE_DIRS /home/$ENV{USER}/ADS/AdsLib/) 
+
+set(ethercat_interface_lib /usr/local/lib/libethercat_interface.so)
+set(ethercat_interface_lib_INCLUDE_DIRS /home/$ENV{USER}/Projects/igh_master/include/)
+
 find_package(catkin REQUIRED COMPONENTS 
     soem 
     roscpp
@@ -12,7 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
     controller_manager
 )
 
-find_library(ADSLIB REQUIRED)
+find_library(${ethercat_interface_lib} REQUIRED)
 
 
 catkin_package(
@@ -25,48 +32,19 @@ catkin_package(
     DEPENDS
 )
 
-
-#add_library(ADSLIB
-#${AdsLib_INCLUDE_DIRS}/standalone/AdsLib.cpp
-#${AdsLib_INCLUDE_DIRS}/standalone/AmsConnection.cpp
-#${AdsLib_INCLUDE_DIRS}/standalone/AmsNetId.cpp
-#${AdsLib_INCLUDE_DIRS}/standalone/AmsPort.cpp
-#${AdsLib_INCLUDE_DIRS}/standalone/AmsRouter.cpp
-#${AdsLib_INCLUDE_DIRS}/standalone/NotificationDispatcher.cpp
-#${AdsLib_INCLUDE_DIRS}/AdsDef.cpp
-#${AdsLib_INCLUDE_DIRS}/AdsDevice.cpp
-#${AdsLib_INCLUDE_DIRS}/AdsFile.cpp
-#${AdsLib_INCLUDE_DIRS}/Log.cpp
-#${AdsLib_INCLUDE_DIRS}/Sockets.cpp
-#${AdsLib_INCLUDE_DIRS}/Frame.cpp
-#)
-
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  ${AdsLib_INCLUDE_DIRS}
+  ${ethercat_interface_lib_INCLUDE_DIRS}
 )
 
 
-
-#add_executable(encoder_demo src/encoder_pub_demo.cpp)
-#target_link_libraries(encoder_demo ${catkin_LIBRARIES})
-#target_link_directories(encoder_demo PUBLIC ${catkin_INCLUDE_DIRS})
-
-add_executable(amr_hwi_node
-    src/amr_hwi.cpp
-    src/io_ads.cpp
-)
-target_link_libraries(amr_hwi_node ${catkin_LIBRARIES} ADSLIB)
-target_link_directories(amr_hwi_node PUBLIC ${AdsLib_INCLUDE_DIRS})
-
-add_executable(amr_controlled_hwi_node
-    src/amr_ddc_hwi.cpp
-    src/amr_hwi_utility.cpp
-    src/io_ads.cpp
-)
-target_link_libraries(amr_controlled_hwi_node ${catkin_LIBRARIES} ADSLIB)
-target_link_directories(amr_controlled_hwi_node PUBLIC ${AdsLib_INCLUDE_DIRS})
 
 install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch)
 install(DIRECTORY config DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config)
+
+add_executable(amr_hw_ethercat 
+    src/amr_hardware.cpp
+)
+target_link_libraries(amr_hw_ethercat ${catkin_LIBRARIES} ${ethercat_interface_lib} /usr/local/lib/libethercat.so)
+target_link_directories(amr_hw_ethercat PUBLIC ${catkin_INCLUDE_DIRS} ${ethercat_interface_lib_INCLUDE_DIRS})

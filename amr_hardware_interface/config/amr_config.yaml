@@ -1,0 +1,198 @@
+EK1100_0:
+ 
+ type: "coupler"
+
+ vendor_id: 0x00000002
+
+ product_id: 0x044c2c52
+
+ slave_position: 0
+ slave_alias: 0
+
+EL7221_9014_0:
+ type: "driver"
+ vendor_id: 0x00000002
+ product_id: 0x1c353052
+ slave_position: 1
+ slave_alias: 0
+
+ pdo_entry_info:
+  indexes:
+   - 0x6040
+   - 0x60ff
+   - 0x6060
+   - 0x6041
+   - 0x6064
+   - 0x606c
+   - 0x6070
+   - 0x6061
+  subindexes:
+   - 0
+   - 0
+   - 0
+   - 0
+   - 0
+   - 0
+  
+  bit_lengths:
+   - 16
+   - 32
+   - 8
+   - 16
+   - 32
+   - 32
+   - 16
+   - 8
+  
+  rxpdo_address: 0x1600
+  rxpdo_size: 3
+  txpdo_address: 0x1a00
+  txpdo_size: 3
+  rxpdo_indexes:
+   - 0x1600
+   - 0x1601
+   - 0x1608
+  txpdo_indexes:
+   - 0x1a00
+   - 0x1a01
+   - 0x1a02
+   - 0x1a03
+   - 0x1a0e
+
+ slave_sync_info:
+
+  num_sync_managers: 4
+
+  sync_manager_directions:
+   - 1
+   - 2
+   - 1
+   - 2
+
+  number_of_pdos:
+   - 0
+   - 0
+   - 3
+   - 3
+
+  pdo_index_diff:
+   - "NULL"
+   - "NULL"
+   - 0
+   - 3
+
+  watchdog_mode:
+   - 2
+   - 2
+   - 2
+   - 2
+
+ dc_info:
+   assign_activate: 0x0700
+
+   sync0_cycle: 2000000
+
+   sync0_shift: 30000
+
+   sync1_cycle: 2000000
+
+   sync1_shift: 1000
+
+ generator_info:
+  - "ctrl_word"
+  - "target_velocity"
+  - "op_mode"
+  - "status_word"
+  - "current_position"
+  - "current_velocity"
+  - "current_torque"
+  - "op_mode_display"
+
+EL7221_9014_1:
+ type: "driver"
+ vendor_id: 0x00000002
+ product_id: 0x1c353052
+ slave_position: 2
+ slave_alias: 0
+
+ pdo_entry_info:
+  indexes:
+   - 0x6040
+   - 0x60ff
+   - 0x6060
+   - 0x6041
+   - 0x6064
+   - 0x606c
+   - 0x6070
+   - 0x6061
+  subindexes:
+   - 0
+   - 0
+   - 0
+   - 0
+   - 0
+   - 0
+  
+  bit_lengths:
+   - 16
+   - 32
+   - 8
+   - 16
+   - 32
+   - 32
+   - 16
+   - 8
+  
+  rxpdo_address: 0x1600
+  rxpdo_size: 3
+  txpdo_address: 0x1a00
+  txpdo_size: 3
+  rxpdo_indexes:
+   - 0x1600
+   - 0x1601
+   - 0x1608
+  txpdo_indexes:
+   - 0x1a00
+   - 0x1a01
+   - 0x1a02
+   - 0x1a03
+   - 0x1a0e
+
+ slave_sync_info:
+
+  num_sync_managers: 4
+
+  sync_manager_directions:
+   - 1
+   - 2
+   - 1
+   - 2
+
+  number_of_pdos:
+   - 0
+   - 0
+   - 3
+   - 3
+
+  pdo_index_diff:
+   - "NULL"
+   - "NULL"
+   - 0
+   - 3
+
+  watchdog_mode:
+   - 2
+   - 2
+   - 2
+   - 2
+
+ dc_info:
+   assign_activate: 0x0700
+
+   sync0_cycle: 2000000
+
+   sync0_shift: 30000
+
+   sync1_cycle: 2000000
+
+   sync1_shift: 1000
