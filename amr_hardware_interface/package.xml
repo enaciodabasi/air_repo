@@ -35,6 +35,18 @@
   <build_depend>controller_manager</build_depend>
   <exec_depend>controller_manager</exec_depend>
 
+  <build_depend>amr_custom_interfaces</build_depend>
+  <exec_depend>amr_custom_interfaces</exec_depend>
+
+  <build_depend>ethercat_interface_lib</build_depend>
+  <exec_depend>ethercat_interface_lib</exec_depend>
+
+  <build_depend>etherlab</build_depend>
+  <exec_depend>etherlab</exec_depend>
+
+  <build_depend>class_loader</build_depend>
+  <exec_depend>class_loader</exec_depend>
+
   <!-- 
   <build_depend>soem</build_depend>
   <exec_depend>soem</exec_depend>

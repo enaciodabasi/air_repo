@@ -10,21 +10,81 @@
  */
 
 #include "../include/amr_hardware.hpp"
+#include "../include/offset_el7221_9014.hpp"
 
 namespace amr
 {
     namespace hardware
     {
+        using namespace ethercat_interface;
+
         HardwareInterface::HardwareInterface(ros::NodeHandle& nh)
             : m_NodeHandle{nh}
         {
             this->loadParams();
+            m_JointNames[0] = "lw_joint";
+            m_JointNames[1] = "rw_joint";
+            ROS_INFO("Loaded parameters.");
+            PERIOD_NS = period_nanosec(500);
+            ROS_INFO("PERIOS_NS");
+            m_CycleTime = {0, PERIOD_NS};
 
-            m_DriveStatusServer = m_NodeHandle.advertiseService(
+            //const auto sysuser = getenv("USER");
+            m_Logger = std::make_shared<logger::Logger>("/home/naci/catkin_ws/src/amr_hardware_interface/logs/", logger::FILE);
+            ROS_INFO("Creating master");
+            m_Master = new master::Master(0, m_Logger);
+            ROS_INFO("Created master");
+            m_Domain = new domain::Domain("amr_domain", m_Logger);
+            ROS_INFO("Created domain");
+            m_Master->registerDomain(m_Domain);
+            ROS_INFO("Registered domain.");
+
+            m_Domain->registerSlave(
+                new slave::Slave(
+                    "EK1100_0",
+                    "/home/naci/catkin_ws/src/amr_hardware_interface/config/amr_config.yaml",
+                    nullptr,
+                    m_Logger,
+                    false
+                )
+            );
+            ROS_INFO("Created Slave EK1100");
+            m_Domain->registerSlave(
+                new slave::Slave(
+                    "EL7221_9014_0",
+                    "/home/naci/catkin_ws/src/amr_hardware_interface/config/amr_config.yaml",
+                    new EL7221_9014_Offset(),
+                    m_Logger,
+                    true
+                )
+            );
+            ROS_INFO("Created Slave EL7221_9014_0");
+
+            m_Domain->registerSlave(
+                new slave::Slave(
+                    "EL7221_9014_1",
+                    "/home/naci/catkin_ws/src/amr_hardware_interface/config/amr_config.yaml",
+                    new EL7221_9014_Offset(),
+                    m_Logger,
+                    true
+                )
+            );
+            ROS_INFO("Created Slave EL7221_9014_1");
+
+            /* m_DriveStatusServer = m_NodeHandle.advertiseService(
                 "change_drive_status",
                 &HardwareInterface::callback_drive_status_change,
                 this
-            );
+            ); */
+
+            m_Master->configureDomains();
+            m_Master->setupDomains();
+
+            if(!m_Master->activateMaster())
+            {
+                ROS_FATAL("Can't activate master.");
+                ros::shutdown();
+            }
 
             m_NumJoints = m_JointNames.size();
 
@@ -57,6 +117,8 @@ namespace amr
 
             m_ControllerManager.reset(new controller_manager::ControllerManager(this, m_NodeHandle));
 
+            clock_gettime(m_ClockToUse, &m_WakeupTime);
+
             ros::Duration updateFrequency = ros::Duration(1.0 / m_LoopFrequency);
             m_Loop = m_NodeHandle.createTimer(
                 updateFrequency,
@@ -68,11 +130,21 @@ namespace amr
 
         HardwareInterface::~HardwareInterface()
         {
-
+            delete m_Domain;
+            delete m_Master;
         }
 
         void HardwareInterface::update(const ros::TimerEvent& timer_event)
         {
+            m_WakeupTime = addTimespec(m_WakeupTime, m_CycleTime);
+            sleep_task(m_ClockToUse, TIMER_ABSTIME, &m_WakeupTime, NULL);
+            m_Master->setMasterTime(timespecToNanoSec(m_WakeupTime));
+            m_Master->receive("amr_domain");
+
+            m_Master->updateMasterState();
+            m_Master->updateDomainStates();
+            m_Master->updateSlaveStates();
+
             this->read();
 
             ros::Duration elapsedTime = ros::Duration(timer_event.current_real - timer_event.last_real);
@@ -80,6 +152,8 @@ namespace amr
             m_ControllerManager->update(timer_event.current_real, elapsedTime);
 
             this->write(elapsedTime);
+
+            m_Master->syncMasterClock(timespecToNanoSec(m_Time));
         }
 
         void HardwareInterface::write(ros::Duration& elapsed_time)
@@ -115,11 +189,11 @@ namespace amr
 
         }
 
-        bool HardwareInterface::callback_drive_status_change(std_srvs::SetBool::Request& request, std_srvs::SetBool::Response& response)
+        /* bool HardwareInterface::callback_drive_status_change(std_srvs::SetBool::Request& request, std_srvs::SetBool::Response& response)
         {
 
             return true;
-        }
+        } */
 
         void HardwareInterface::loadParams()
         {
@@ -154,6 +228,7 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, "amr_hardware_interface_node");
     ros::NodeHandle nh;
+    amr::hardware::HardwareInterface hw(nh);
     ros::AsyncSpinner spinner(2);
     spinner.start();
 

@@ -29,7 +29,12 @@
 #include "slave.hpp"
 #include "master.hpp"
 #include "domain.hpp"
-#include "dc_sync.h"
+
+extern "C"
+{
+    #include "dc_sync.h"
+}
+
 
 namespace amr
 {
@@ -37,6 +42,8 @@ namespace amr
     {
         class HardwareInterface : public hardware_interface::RobotHW
         {
+            public:
+
             HardwareInterface(ros::NodeHandle& nh);
             ~HardwareInterface();
 
@@ -48,6 +55,7 @@ namespace amr
 
             ethercat_interface::master::Master* m_Master;
             ethercat_interface::domain::Domain* m_Domain;
+            std::shared_ptr<ethercat_interface::logger::Logger> m_Logger;
 
             std::vector<std::string> m_JointNames;
 
@@ -66,6 +74,12 @@ namespace amr
 
             ros::Timer m_Loop;
             double m_LoopFrequency = 50;
+            timespec m_CycleTime;
+            long PERIOD_NS = 0;
+            timespec m_WakeupTime;
+            timespec m_Time;
+
+            int m_ClockToUse = CLOCK_MONOTONIC;
             
             boost::shared_ptr<controller_manager::ControllerManager> m_ControllerManager;
 
@@ -77,7 +91,7 @@ namespace amr
 
             void loadParams();
 
-            bool callback_drive_status_change(std_srvs::SetBool::Request& request, std_srvs::SetBool::Response& response);
+            //bool callback_drive_status_change(std_srvs::SetBool::Request& request, std_srvs::SetBool::Response& response);
         };
     }
 }

@@ -3,6 +3,6 @@
 
     <rosparam file="$(find amr_hardware_interface)/config/hardware_interface.yaml" command="load"></rosparam>
 
-    <node pkg="amr_hardware_interface" name="amr_controlled_hwi_node" type="amr_controlled_hwi_node" output="screen"></node>
+    <node pkg="amr_hardware_interface" name="amr_hw_ethercat" launch-prefix="ethercat_grant" type="amr_hw_ethercat" output="screen"></node>
 
 </launch>
