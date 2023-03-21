@@ -182,18 +182,28 @@ namespace amr
         {
             ros::Duration elapsedTime = elapsed_time;
 
+            int32_t targetVelLeft = utils::linearVelToDriverCmd(
+                m_VelocityCommands[0],
+                m_DriverInfo
+            );
+
+            int32_t targetVelRight = utils::linearVelToDriverCmd(
+                m_VelocityCommands[1],
+                m_DriverInfo
+            );
+
             m_Master->write<int32_t>(
                 "amr_domain",
                 "EL7221_9014_0",
                 "target_velocity",
-                600000
+                targetVelLeft
             );
             // sag
             m_Master->write<int32_t>(
                 "amr_domain",
                 "EL7221_9014_1",
                 "target_velocity",
-                600000
+                targetVelRight
             );
             
         }
@@ -208,13 +218,13 @@ namespace amr
 
             m_JointPositions[0] = leftWheelPos;
             
-            m_JointVelocities[0] = leftWheelVel;
+            m_JointVelocities[0] = utils::linearVelToDriverCmd(leftWheelVel, m_DriverInfo);
             
             m_JointEfforts[0] = 0.0;
             
             m_JointPositions[1] = rightWheelPos;
             
-            m_JointVelocities[1] = rightWheelVel;
+            m_JointVelocities[1] = utils::linearVelToDriverCmd(rightWheelVel, m_DriverInfo);
             
             m_JointEfforts[1] = 0.0;
             
