@@ -2,11 +2,11 @@
 
 <launch>
 
-    <node pkg="amr_localization" name="amr_odom_server" type="amr_odom_server">
+   <!--  <node pkg="amr_localization" name="amr_odom_server" type="amr_odom_server">
 
         <rosparam command="load" file="$(find amr_localization)/param/amr_odom_params.yaml"></rosparam>
 
-    </node>
+    </node>s -->
 
     <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se" clear_params="true">
         <rosparam command="load" file="$(find amr_localization)/param/amr_ekf_params.yaml"></rosparam>

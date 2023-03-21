@@ -47,6 +47,9 @@
   <build_depend>class_loader</build_depend>
   <exec_depend>class_loader</exec_depend>
 
+  <build_depend>diff_drive_controller</build_depend>
+  <exec_depend>diff_drive_controller</exec_depend>
+
   <!-- 
   <build_depend>soem</build_depend>
   <exec_depend>soem</exec_depend>

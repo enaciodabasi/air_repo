@@ -14,15 +14,20 @@
     output="screen"
     />
     <node
-    name="joint_state_publisher_gui"
-    pkg="joint_state_publisher_gui"
-    type="joint_state_publisher_gui" />
+    name="joint_state_publisher"
+    pkg="joint_state_publisher"
+    type="joint_state_publisher" />
 
-    <include file="$(find amr_control)/launch/amr_control.launch"></include>
     <include file="$(find amr_hardware_interface)/launch/controller_hardware_interface.launch"></include>
+    <include file="$(find amr_control)/launch/amr_control.launch"></include>
     <include file="$(find amr_localization)/launch/amr_localization.launch"></include>
     <include file="$(find amr_mapping)/launch/amr_mapping.launch"></include>
     <include file="$(find amr_navigation)/launch/amr_navigation.launch"></include>
 
+    <node
+    name="rviz"
+    pkg="rviz"
+    type="rviz"
+    args="-d $(find amr_bringup)/rviz/amr.rviz" />
 
 </launch>

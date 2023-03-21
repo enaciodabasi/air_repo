@@ -3,11 +3,18 @@ project(amr_bringup)
 
 find_package(catkin REQUIRED COMPONENTS
     roslaunch
+    diff_drive_controller
 )
 
 
 catkin_package(
-
+    INCLUDE_DIRS
+    CATKIN_DEPENDS
+    roscpp
+    controller_manager
+    diff_drive_controller
+    class_loader
+    DEPENDS
 )
 
 

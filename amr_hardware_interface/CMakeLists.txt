@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
     sensor_msgs
     controller_manager
     class_loader
+    diff_drive_controller
 )
 
 find_package(yaml-cpp REQUIRED) 
@@ -41,6 +42,7 @@ catkin_package(
     nav_msgs
     sensor_msgs
     controller_manager
+    diff_drive_controller
     class_loader
     DEPENDS
     ethercat_interface_lib

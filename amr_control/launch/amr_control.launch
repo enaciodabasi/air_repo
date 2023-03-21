@@ -10,7 +10,7 @@
         type="spawner" 
         respawn="false"
         output="screen"
-        args="joint_state_controller amr_controller"
+        args="/amr/joint_state_controller /amr/mobile_base_controller"
     ></node>
 
 </launch>

@@ -11,6 +11,18 @@
 
   <build_depend>roslaunch</build_depend>
   <exec_depend>roslaunch</exec_depend>
+
+  <build_depend>class_loader</build_depend>
+  <exec_depend>class_loader</exec_depend>
+
+  <build_depend>diff_drive_controller</build_depend>
+  <exec_depend>diff_drive_controller</exec_depend>
+
+  <build_depend>roscpp</build_depend>
+  <exec_depend>roscpp</exec_depend>
+
+  <build_depend>controller_manager</build_depend>
+  <exec_depend>controller_manager</exec_depend>
   <export>
 
   </export>

@@ -22,8 +22,7 @@ namespace amr
             : m_NodeHandle{nh}
         {
             this->loadParams();
-            m_JointNames[0] = "lw_joint";
-            m_JointNames[1] = "rw_joint";
+
             ROS_INFO("Loaded parameters.");
             PERIOD_NS = period_nanosec(500);
             ROS_INFO("PERIOS_NS");
@@ -115,7 +114,10 @@ namespace amr
             this->registerInterface(&m_JointStateInterface);
             this->registerInterface(&m_VelJointInterface);
 
-            m_ControllerManager.reset(new controller_manager::ControllerManager(this, m_NodeHandle));
+            m_ControllerManager = boost::make_shared<controller_manager::ControllerManager>(
+                this,
+                m_NodeHandle
+            );
 
             clock_gettime(m_ClockToUse, &m_WakeupTime);
 
@@ -286,7 +288,7 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "amr_hardware_interface_node");
     ros::NodeHandle nh;
     amr::hardware::HardwareInterface hw(nh);
-    ros::AsyncSpinner spinner(2);
+    ros::AsyncSpinner spinner(3);
     spinner.start();
 
     ros::waitForShutdown();
