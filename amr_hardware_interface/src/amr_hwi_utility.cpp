@@ -4,30 +4,27 @@ namespace amr
 {
     namespace utils
     {
-        WheelState::WheelState(const std::string& wheel_name, const int encoder_resolution)
-            : m_WheelName(wheel_name), m_PrevEncoderTicks{0}, m_LastUpdateTime(0, 0), m_EncoderResolution(encoder_resolution)
+        double driverVelToLinear(int32_t driver_vel, const VelocityHelper& vel_helper)
         {
-            m_State.angularPos = 0.0;
-            m_State.angularVel = 0.0;
+
+            double linearVel = (driver_vel) *
+            (60.0 / vel_helper.velocityEncoderResolution)*
+            (M_PI * vel_helper.wheelDiameter / 60.0) / 
+            (vel_helper.wheelSideGear / (vel_helper.motorSideGear * vel_helper.motorGearHeat));
+
+            return linearVel;
         }
 
-        State WheelState::calculateWheelState(const ros::Time& current_time, const long encoder_ticks)
+        int32_t linearVelToDriverCmd(const double linear_vel, const VelocityHelper& vel_helper)
         {
-            ros::Duration deltaT = current_time - m_LastUpdateTime;
-            
-            double deltaT_secs = deltaT.toSec();
+            int32_t driverCmd = (
+                linear_vel * 
+                vel_helper.motorSideGear *
+                vel_helper.motorGearHeat *
+                vel_helper.velocityEncoderResolution) / 
+                (M_PI * vel_helper.wheelDiameter * vel_helper.wheelSideGear);
 
-            double deltaTicks = encoder_ticks - m_PrevEncoderTicks;
-
-            double deltaAngle = ticksToAngle(deltaTicks);
-            
-            m_State.angularPos += deltaAngle;
-            m_State.angularVel += deltaAngle / deltaT_secs;
-
-            m_LastUpdateTime = current_time;
-            m_PrevEncoderTicks = encoder_ticks;
-
-            return m_State;
+            return driverCmd * int32_t(vel_helper.motorMaxRPM);
         }
     }
 }

@@ -58,6 +58,7 @@ install(DIRECTORY config DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config)
 
 add_executable(amr_hw_ethercat 
     src/amr_hardware.cpp
+    src/amr_hwi_utility.cpp
 )
 #message(FATAL_ERROR ${ethercat_interface_lib_LIBRARIES})
 

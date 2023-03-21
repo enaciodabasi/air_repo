@@ -1,43 +1,18 @@
 amr:
-  ads_config:
-    #remote_ipv4: "172.34.6.72"
-    remote_ipv4: "169.254.71.135"
-    remote_net_id: "172.18.212.67.1.1"
-    local_adress:
-      - 172
-      - 34
-      - 6
-      - 69
-      - 1
-      - 1
-    port_num: 851
-    symbols:
-      left_encoder: "GVL.fActVel_R"
-      right_encoder: "GVL.fActVel_L"
-
-      left_motor: "left_motor_symbol"
-      right_motor: "right_motor_symbol"
-
-      linear_vel: "GVL.fRefLin"
-      angular_vel: "GVL.fRefAng"
-      
-      
-      drive_status: "GVL.bEnable"
-
-      wheels:
-        left:
-          vel: ""
-          pos: ""
-        
-        right:
-          vel: ""
-          pos: ""
+ 
+ driver_info:
+  velocity_enc_resolution: 268435.0
+  wheel_side_gear: 60.0
+  motor_side_gear: 21.0
+  motor_gear_heat: 16.0
+  wheel_diameter: 0.2 # in m
+  motor_max_rpm: 2178.0
 
 
-  hardware_interface:
-    joints:
-    - "lw_joint"
-    - "rw_joint"
-    loop_hz: 50
-    encoders:
-      resolution: 18
+ hardware_interface:
+   joints:
+   - "lw_joint"
+   - "rw_joint"
+   loop_hz: 50
+   encoders:
+     resolution: 18

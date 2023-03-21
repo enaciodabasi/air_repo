@@ -30,6 +30,8 @@
 #include "master.hpp"
 #include "domain.hpp"
 
+#include "../include/amr_hwi_utility.hpp"
+
 extern "C"
 {
     #include "dc_sync.h"
@@ -88,6 +90,8 @@ namespace amr
             hardware_interface::VelocityJointInterface m_VelJointInterface;
 
             std::unordered_map<std::string, std::string> m_SymbolNameMap;
+
+            utils::VelocityHelper m_DriverInfo;
 
             void loadParams();
 

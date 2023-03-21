@@ -119,7 +119,7 @@ namespace amr
 
             clock_gettime(m_ClockToUse, &m_WakeupTime);
 
-            ros::Duration updateFrequency = ros::Duration(1.0 / m_LoopFrequency);
+            ros::Duration updateFrequency = ros::Duration(0.002);
             m_Loop = m_NodeHandle.createTimer(
                 updateFrequency,
                 &HardwareInterface::update,
@@ -144,35 +144,68 @@ namespace amr
             m_Master->updateMasterState();
             m_Master->updateDomainStates();
             m_Master->updateSlaveStates();
+            
+            bool slavesEnabled = m_Master->enableSlaves();
 
-            this->read();
+            m_Master->write<int8_t>(
+                "amr_domain",
+                "EL7221_9014_0",
+                "op_mode",
+                0x09
+            );
 
-            ros::Duration elapsedTime = ros::Duration(timer_event.current_real - timer_event.last_real);
+            m_Master->write<int8_t>(
+                "amr_domain",
+                "EL7221_9014_1",
+                "op_mode",
+                0x09
+            );
 
-            m_ControllerManager->update(timer_event.current_real, elapsedTime);
+            if(slavesEnabled)
+            {   
+                ROS_INFO("Slaves enabled");
+                this->read();
 
-            this->write(elapsedTime);
+                ros::Duration elapsedTime = ros::Duration(timer_event.current_real - timer_event.last_real);
 
+                m_ControllerManager->update(timer_event.current_real, elapsedTime);
+
+                this->write(elapsedTime);
+
+                
+            }
             m_Master->syncMasterClock(timespecToNanoSec(m_Time));
+            m_Master->send("amr_domain");
         }
 
         void HardwareInterface::write(ros::Duration& elapsed_time)
         {
             ros::Duration elapsedTime = elapsed_time;
 
+            m_Master->write<int32_t>(
+                "amr_domain",
+                "EL7221_9014_0",
+                "target_velocity",
+                600000
+            );
+            // sag
+            m_Master->write<int32_t>(
+                "amr_domain",
+                "EL7221_9014_1",
+                "target_velocity",
+                600000
+            );
             
         }
 
         void HardwareInterface::read()
         {
-    
             
-            
-            double leftWheelVel = 0.0;
+            double leftWheelVel = (double)(m_Master->read<int32_t>("amr_domain", "EL7221_9014_0", "current_velocity"));
             double leftWheelPos = 0.0;
-            double rightWheelVel = 0.0;
+            double rightWheelVel = (double)(m_Master->read<int32_t>("amr_domain", "EL7221_9014_1", "current_velocity"));
             double rightWheelPos = 0.0;
-            
+
             m_JointPositions[0] = leftWheelPos;
             
             m_JointVelocities[0] = leftWheelVel;
@@ -211,6 +244,20 @@ namespace amr
             if(m_NodeHandle.hasParam("/amr/harware_interface/loop_hz"))
             {
                 m_NodeHandle.getParam("/amr/hardware_interface/loop_hz", m_LoopFrequency);
+            }
+            else
+            {
+                ROS_INFO("Loop freuency is not specified in the parameter server. Defaulting back to 50 Hz");
+            }
+
+            if(m_NodeHandle.hasParam("/amr/driver_info"))
+            {   
+                m_NodeHandle.getParam("/amr/driver_info/velocity_enc_resolution", m_DriverInfo.velocityEncoderResolution);
+                m_NodeHandle.getParam("/amr/driver_info/wheel_side_gear", m_DriverInfo.wheelSideGear);
+                m_NodeHandle.getParam("/amr/driver_info/motor_side_gear", m_DriverInfo.motorSideGear);
+                m_NodeHandle.getParam("/amr/driver_info/motor_gear_heat", m_DriverInfo.motorGearHeat);
+                m_NodeHandle.getParam("/amr/driver_info/wheel_diameter", m_DriverInfo.wheelDiameter);
+                m_NodeHandle.getParam("/amr/driver_info/motor_max_rpm", m_DriverInfo.motorMaxRPM);
             }
             else
             {

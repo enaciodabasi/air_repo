@@ -49,7 +49,7 @@ EL7221_9014_0:
   rxpdo_address: 0x1600
   rxpdo_size: 3
   txpdo_address: 0x1a00
-  txpdo_size: 3
+  txpdo_size: 5
   rxpdo_indexes:
    - 0x1600
    - 0x1601
@@ -150,7 +150,7 @@ EL7221_9014_1:
   rxpdo_address: 0x1600
   rxpdo_size: 3
   txpdo_address: 0x1a00
-  txpdo_size: 3
+  txpdo_size: 5
   rxpdo_indexes:
    - 0x1600
    - 0x1601
