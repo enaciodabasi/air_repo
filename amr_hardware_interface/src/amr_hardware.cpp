@@ -300,6 +300,8 @@ int main(int argc, char** argv)
 
     ros::Time prev_time = ros::Time::now();
 
+    clock_gettime(hw.m_ClockToUse, &hw.m_WakeupTime);
+
     while(ros::ok())
     {   
         hw.m_WakeupTime = addTimespec(hw.m_WakeupTime, hw.m_CycleTime);
@@ -337,6 +339,7 @@ int main(int argc, char** argv)
         if(slavesEnabled)
             hw.write();
 
+        clock_gettime(hw.m_ClockToUse, &hw.m_Time);
         hw.m_Master->syncMasterClock(timespecToNanoSec(hw.m_Time));
         hw.m_Master->send("amr_domain");
     }
