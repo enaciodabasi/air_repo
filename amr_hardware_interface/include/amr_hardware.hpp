@@ -80,6 +80,7 @@ namespace amr
             std::vector<double> m_JointPositions;
             std::vector<double> m_JointVelocities;
             std::vector<double> m_JointEfforts;
+            
 
             std::vector<double> m_VelocityCommands;
 
