@@ -29,6 +29,7 @@
 #include "slave.hpp"
 #include "master.hpp"
 #include "domain.hpp"
+#include "utilities.hpp"
 
 #include "../include/amr_hwi_utility.hpp"
 
@@ -37,6 +38,7 @@ extern "C"
     #include "dc_sync.h"
 }
 
+using namespace ethercat_interface::utilities;
 
 namespace amr
 {
@@ -66,6 +68,8 @@ namespace amr
             int m_ClockToUse = CLOCK_MONOTONIC;
 
             int ref_clock_counter = 0;
+
+            debug::TimeMeasureInfo_s m_Measurer;
             
             private:
 
@@ -91,6 +95,8 @@ namespace amr
             hardware_interface::VelocityJointInterface m_VelJointInterface;
 
             std::unordered_map<std::string, std::string> m_SymbolNameMap;
+
+            
 
             utils::VelocityHelper m_DriverInfo;
 

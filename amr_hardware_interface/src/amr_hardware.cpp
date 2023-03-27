@@ -307,6 +307,7 @@ int main(int argc, char** argv)
         hw.m_WakeupTime = addTimespec(hw.m_WakeupTime, hw.m_CycleTime);
         sleep_task(hw.m_ClockToUse, TIMER_ABSTIME, &hw.m_WakeupTime, NULL);
         
+        debug::measureTime(hw.m_Measurer, hw.m_WakeupTime);
 
         const ros::Time time = ros::Time::now();
         const ros::Duration period = time - prev_time;
@@ -317,6 +318,10 @@ int main(int argc, char** argv)
         hw.m_Master->updateDomainStates();
         hw.m_Master->updateSlaveStates();
         
+        auto timingStats = hw.m_Measurer.getTimingStats();
+
+        ROS_INFO(timingStats.c_str());
+
         bool slavesEnabled = hw.m_Master->enableSlaves();
         hw.m_Master->write<int8_t>(
             "amr_domain",
@@ -349,10 +354,12 @@ int main(int argc, char** argv)
             hw.ref_clock_counter = 1;
             syncRefClock = true;
         }
-        
+
         clock_gettime(hw.m_ClockToUse, &hw.m_Time);
         hw.m_Master->syncMasterClock(timespecToNanoSec(hw.m_Time), syncRefClock);
         hw.m_Master->send("amr_domain");
+
+        hw.m_Measurer.updateEndTime();
     }
 
     ros::waitForShutdown();
