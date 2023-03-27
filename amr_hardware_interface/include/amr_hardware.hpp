@@ -49,15 +49,23 @@ namespace amr
             HardwareInterface(ros::NodeHandle& nh);
             ~HardwareInterface();
 
-            void update(const ros::TimerEvent& timer_event);
+            //void update(const ros::TimerEvent& timer_event);
             void read();
-            void write(ros::Duration& elapsed_time);
-
-            private:
+            void write();
 
             ethercat_interface::master::Master* m_Master;
             ethercat_interface::domain::Domain* m_Domain;
             std::shared_ptr<ethercat_interface::logger::Logger> m_Logger;
+            ros::Timer m_Loop;
+            double m_LoopFrequency = 50;
+            timespec m_CycleTime;
+            long PERIOD_NS = 0;
+            timespec m_WakeupTime;
+            timespec m_Time;
+
+            int m_ClockToUse = CLOCK_MONOTONIC;
+            
+            private:
 
             std::vector<std::string> m_JointNames;
 
@@ -74,16 +82,7 @@ namespace amr
             ros::ServiceServer m_DriveStatusServer;
             bool m_DriverStatus = true;
 
-            ros::Timer m_Loop;
-            double m_LoopFrequency = 50;
-            timespec m_CycleTime;
-            long PERIOD_NS = 0;
-            timespec m_WakeupTime;
-            timespec m_Time;
-
-            int m_ClockToUse = CLOCK_MONOTONIC;
-            
-            boost::shared_ptr<controller_manager::ControllerManager> m_ControllerManager;
+            //boost::shared_ptr<controller_manager::ControllerManager> m_ControllerManager;
 
             hardware_interface::JointStateInterface m_JointStateInterface;
 

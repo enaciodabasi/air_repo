@@ -4,7 +4,7 @@ project(amr_hardware_interface)
 set(CMAKE_CXX_STANDARD 17)
 
 set(ethercat_interface_lib /usr/local/lib/libethercat_interface.so)
-set(ethercat_interface_lib_INCLUDE_DIRS /home/naci/Projects/igh_master/include/)
+set(ethercat_interface_lib_INCLUDE_DIRS /home/ubuntu/ethercat_interface/include/)
 set(etherlab /usr/local/lib/libethercat.so)
 
 find_package(catkin REQUIRED COMPONENTS 
