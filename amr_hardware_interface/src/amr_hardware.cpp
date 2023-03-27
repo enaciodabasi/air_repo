@@ -339,8 +339,19 @@ int main(int argc, char** argv)
         if(slavesEnabled)
             hw.write();
 
+        bool syncRefClock = false;
+        if(hw.ref_clock_counter)
+        {
+            hw.ref_clock_counter -= 1;
+        }
+        else
+        {
+            hw.ref_clock_counter = 1;
+            syncRefClock = true;
+        }
+        
         clock_gettime(hw.m_ClockToUse, &hw.m_Time);
-        hw.m_Master->syncMasterClock(timespecToNanoSec(hw.m_Time));
+        hw.m_Master->syncMasterClock(timespecToNanoSec(hw.m_Time), syncRefClock);
         hw.m_Master->send("amr_domain");
     }
 

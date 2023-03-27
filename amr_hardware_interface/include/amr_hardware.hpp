@@ -64,6 +64,8 @@ namespace amr
             timespec m_Time;
 
             int m_ClockToUse = CLOCK_MONOTONIC;
+
+            int ref_clock_counter = 0;
             
             private:
 
