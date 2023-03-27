@@ -20,10 +20,10 @@
 
     <include file="$(find amr_hardware_interface)/launch/controller_hardware_interface.launch"></include>
     <include file="$(find amr_control)/launch/amr_control.launch"></include>
-    <include file="$(find amr_localization)/launch/amr_localization.launch"></include>
+    <!-- <include file="$(find amr_localization)/launch/amr_localization.launch"></include>
     <include file="$(find amr_mapping)/launch/amr_mapping.launch"></include>
     <include file="$(find amr_navigation)/launch/amr_navigation.launch"></include>
-
+ -->
     <node
     name="rviz"
     pkg="rviz"

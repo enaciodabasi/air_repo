@@ -29,7 +29,7 @@ namespace amr
             m_CycleTime = {0, PERIOD_NS};
 
             //const auto sysuser = getenv("USER");
-            m_Logger = std::make_shared<logger::Logger>("/home/naci/catkin_ws/src/amr_hardware_interface/logs/", logger::FILE);
+            m_Logger = std::make_shared<logger::Logger>("/home/ubuntu/catkin_ws/src/amr_hardware_interface/logs/", logger::FILE);
             ROS_INFO("Creating master");
             m_Master = new master::Master(0, m_Logger);
             ROS_INFO("Created master");
@@ -41,7 +41,7 @@ namespace amr
             m_Domain->registerSlave(
                 new slave::Slave(
                     "EK1100_0",
-                    "/home/naci/catkin_ws/src/amr_hardware_interface/config/amr_config.yaml",
+                    "/home/ubuntu/catkin_ws/src/amr_hardware_interface/config/amr_config.yaml",
                     nullptr,
                     m_Logger,
                     false
@@ -51,7 +51,7 @@ namespace amr
             m_Domain->registerSlave(
                 new slave::Slave(
                     "EL7221_9014_0",
-                    "/home/naci/catkin_ws/src/amr_hardware_interface/config/amr_config.yaml",
+                    "/home/ubuntu/catkin_ws/src/amr_hardware_interface/config/amr_config.yaml",
                     new EL7221_9014_Offset(),
                     m_Logger,
                     true
@@ -62,7 +62,7 @@ namespace amr
             m_Domain->registerSlave(
                 new slave::Slave(
                     "EL7221_9014_1",
-                    "/home/naci/catkin_ws/src/amr_hardware_interface/config/amr_config.yaml",
+                    "/home/ubuntu/catkin_ws/src/amr_hardware_interface/config/amr_config.yaml",
                     new EL7221_9014_Offset(),
                     m_Logger,
                     true
@@ -114,19 +114,19 @@ namespace amr
             this->registerInterface(&m_JointStateInterface);
             this->registerInterface(&m_VelJointInterface);
 
-            m_ControllerManager = boost::make_shared<controller_manager::ControllerManager>(
+            /* m_ControllerManager = boost::make_shared<controller_manager::ControllerManager>(
                 this,
                 m_NodeHandle
-            );
+            ); */
 
             clock_gettime(m_ClockToUse, &m_WakeupTime);
 
-            ros::Duration updateFrequency = ros::Duration(0.002);
+            /* ros::Duration updateFrequency = ros::Duration(0.002);
             m_Loop = m_NodeHandle.createTimer(
                 updateFrequency,
                 &HardwareInterface::update,
                 this
-            );
+            ); */
 
         }
 
@@ -136,7 +136,7 @@ namespace amr
             delete m_Master;
         }
 
-        void HardwareInterface::update(const ros::TimerEvent& timer_event)
+        /* void HardwareInterface::update(const ros::TimerEvent& timer_event)
         {
             m_WakeupTime = addTimespec(m_WakeupTime, m_CycleTime);
             sleep_task(m_ClockToUse, TIMER_ABSTIME, &m_WakeupTime, NULL);
@@ -165,7 +165,6 @@ namespace amr
 
             if(slavesEnabled)
             {   
-                ROS_INFO("Slaves enabled");
                 this->read();
 
                 ros::Duration elapsedTime = ros::Duration(timer_event.current_real - timer_event.last_real);
@@ -178,11 +177,14 @@ namespace amr
             }
             m_Master->syncMasterClock(timespecToNanoSec(m_Time));
             m_Master->send("amr_domain");
-        }
+        } */
 
-        void HardwareInterface::write(ros::Duration& elapsed_time)
+        void HardwareInterface::write()
         {
-            ros::Duration elapsedTime = elapsed_time;
+            //ros::Duration elapsedTime = elapsed_time;
+
+            ROS_INFO("%d", m_VelocityCommands[0]);
+            ROS_INFO("%d", m_VelocityCommands[1]);
 
             int32_t targetVelLeft = utils::linearVelToDriverCmd(
                 m_VelocityCommands[0],
@@ -194,13 +196,17 @@ namespace amr
                 m_DriverInfo
             );
 
+            ROS_INFO("%d", targetVelLeft);
+            ROS_INFO("%d", targetVelRight);
+
+
             m_Master->write<int32_t>(
                 "amr_domain",
                 "EL7221_9014_0",
                 "target_velocity",
                 targetVelLeft
             );
-            // sag
+            //// sag
             m_Master->write<int32_t>(
                 "amr_domain",
                 "EL7221_9014_1",
@@ -288,8 +294,52 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "amr_hardware_interface_node");
     ros::NodeHandle nh;
     amr::hardware::HardwareInterface hw(nh);
-    ros::AsyncSpinner spinner(3);
+    controller_manager::ControllerManager cm(&hw);
+    ros::AsyncSpinner spinner(1);
     spinner.start();
+
+    ros::Time prev_time = ros::Time::now();
+
+    while(ros::ok())
+    {   
+        hw.m_WakeupTime = addTimespec(hw.m_WakeupTime, hw.m_CycleTime);
+        sleep_task(hw.m_ClockToUse, TIMER_ABSTIME, &hw.m_WakeupTime, NULL);
+        
+
+        const ros::Time time = ros::Time::now();
+        const ros::Duration period = time - prev_time;
+
+        hw.m_Master->setMasterTime(timespecToNanoSec(hw.m_WakeupTime));
+        hw.m_Master->receive("amr_domain");
+        hw.m_Master->updateMasterState();
+        hw.m_Master->updateDomainStates();
+        hw.m_Master->updateSlaveStates();
+        
+        bool slavesEnabled = hw.m_Master->enableSlaves();
+        hw.m_Master->write<int8_t>(
+            "amr_domain",
+            "EL7221_9014_0",
+            "op_mode",
+            0x09
+        );
+        hw.m_Master->write<int8_t>(
+            "amr_domain",
+            "EL7221_9014_1",
+            "op_mode",
+            0x09
+        );
+
+        if(slavesEnabled)
+            hw.read();
+
+        cm.update(time, period);
+
+        if(slavesEnabled)
+            hw.write();
+
+        hw.m_Master->syncMasterClock(timespecToNanoSec(hw.m_Time));
+        hw.m_Master->send("amr_domain");
+    }
 
     ros::waitForShutdown();
 
