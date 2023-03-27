@@ -301,6 +301,7 @@ int main(int argc, char** argv)
     ros::Time prev_time = ros::Time::now();
 
     clock_gettime(hw.m_ClockToUse, &hw.m_WakeupTime);
+    auto printTimer = std::chrono::high_resolution_clock::now();
 
     while(ros::ok())
     {   
@@ -320,7 +321,21 @@ int main(int argc, char** argv)
         
         auto timingStats = hw.m_Measurer.getTimingStats();
 
-        ROS_INFO(timingStats.c_str());
+        bool shouldPrint = [&printTimer](){
+            auto now = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::seconds>(
+                now - printTimer
+            );
+            if(duration.count() >= 1)
+                return true;
+
+            return false;
+        }();
+
+        if(shouldPrint)
+            ROS_INFO(timingStats.c_str());
+
+        printTimer = std::chrono::high_resolution_clock::now();
 
         bool slavesEnabled = hw.m_Master->enableSlaves();
         hw.m_Master->write<int8_t>(
