@@ -136,68 +136,18 @@ namespace amr
             delete m_Master;
         }
 
-        /* void HardwareInterface::update(const ros::TimerEvent& timer_event)
-        {
-            m_WakeupTime = addTimespec(m_WakeupTime, m_CycleTime);
-            sleep_task(m_ClockToUse, TIMER_ABSTIME, &m_WakeupTime, NULL);
-            m_Master->setMasterTime(timespecToNanoSec(m_WakeupTime));
-            m_Master->receive("amr_domain");
-
-            m_Master->updateMasterState();
-            m_Master->updateDomainStates();
-            m_Master->updateSlaveStates();
-            
-            bool slavesEnabled = m_Master->enableSlaves();
-
-            m_Master->write<int8_t>(
-                "amr_domain",
-                "EL7221_9014_0",
-                "op_mode",
-                0x09
-            );
-
-            m_Master->write<int8_t>(
-                "amr_domain",
-                "EL7221_9014_1",
-                "op_mode",
-                0x09
-            );
-
-            if(slavesEnabled)
-            {   
-                this->read();
-
-                ros::Duration elapsedTime = ros::Duration(timer_event.current_real - timer_event.last_real);
-
-                m_ControllerManager->update(timer_event.current_real, elapsedTime);
-
-                this->write(elapsedTime);
-
-                
-            }
-            m_Master->syncMasterClock(timespecToNanoSec(m_Time));
-            m_Master->send("amr_domain");
-        } */
-
         void HardwareInterface::write()
         {
-            //ros::Duration elapsedTime = elapsed_time;
-
-            ROS_INFO("%d", m_VelocityCommands[0]);
-            ROS_INFO("%d", m_VelocityCommands[1]);
 
             int32_t targetVelLeft = utils::linearVelToDriverCmd(
-                m_VelocityCommands[0],
+                m_VelocityCommands[0] * m_WheelRadius,
                 m_DriverInfo
             );
 
             int32_t targetVelRight = utils::linearVelToDriverCmd(
-                m_VelocityCommands[1],
+                m_VelocityCommands[1] * m_WheelRadius,
                 m_DriverInfo
             );
-
-            ROS_INFO("%d", targetVelLeft);
-            ROS_INFO("%d", targetVelRight);
 
 
             m_Master->write<int32_t>(
@@ -224,19 +174,9 @@ namespace amr
             double rightWheelVel = (double)(m_Master->read<int32_t>("amr_domain", "EL7221_9014_1", "current_velocity"));
             double rightWheelPos = 0.0;
 
-            m_JointPositions[0] = leftWheelPos;
-            
-            m_JointVelocities[0] = utils::linearVelToDriverCmd(leftWheelVel, m_DriverInfo);
-            
-            m_JointEfforts[0] = 0.0;
-            
-            m_JointPositions[1] = rightWheelPos;
-            
-            m_JointVelocities[1] = utils::linearVelToDriverCmd(rightWheelVel, m_DriverInfo);
-            
-            m_JointEfforts[1] = 0.0;
-            
-            
+            m_JointVelocities[0] = utils::driverVelToLinear(leftWheelVel, m_DriverInfo);
+                        
+            m_JointVelocities[1] = utils::driverVelToLinear(rightWheelVel, m_DriverInfo);
 
         }
 
