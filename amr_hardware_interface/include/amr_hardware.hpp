@@ -109,6 +109,8 @@ namespace amr
             std::vector<double> m_JointPositions;
             std::vector<double> m_JointVelocities;
             std::vector<double> m_JointEfforts;
+            
+            double m_WheelRadius = 0.1; // [m]
 
             int32_t m_TargetVelLeft = 0;
             int32_t m_TargetVelRight = 0;
@@ -125,7 +127,7 @@ namespace amr
             bool m_DriverStatus = true;
             double m_WheelRadius = 0.1;
             //boost::shared_ptr<controller_manager::ControllerManager> m_ControllerManager;
-
+            
             hardware_interface::JointStateInterface m_JointStateInterface;
 
             hardware_interface::VelocityJointInterface m_VelJointInterface;
