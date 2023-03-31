@@ -19,9 +19,17 @@ namespace amr
             double motorMaxRPM = 0.0;
         };
 
+        struct PositionHelper
+        {
+            double encoderResolution;
+            double gearRatio;
+        };
+
         int32_t linearVelToDriverCmd(const double linear_vel, const VelocityHelper& vel_helper);
 
         double driverVelToLinear(const int32_t driver_vel, const VelocityHelper& vel_helper);
+        
+        double motorPositionToWheelPositionRad(const int32_t encoder_count, const PositionHelper& pos_helper);
 
     }
 }

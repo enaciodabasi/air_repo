@@ -1,18 +1,16 @@
 amr:
- 
- driver_info:
-  velocity_enc_resolution: 268435.0
-  wheel_side_gear: 60.0
-  motor_side_gear: 21.0
-  motor_gear_heat: 16.0
-  wheel_diameter: 0.2 # in m
-  motor_max_rpm: 2178.0
-
-
- hardware_interface:
-   joints:
-   - "lw_joint"
-   - "rw_joint"
-   loop_hz: 50
-   encoders:
-     resolution: 18
+  driver_info:
+    velocity_enc_resolution: 268435.0
+    wheel_side_gear: 60.0
+    motor_side_gear: 21.0
+    motor_gear_heat: 16.0
+    wheel_diameter: 0.2 # in m
+    motor_max_rpm: 2178.0
+  
+  hardware_interface:
+    joints:
+      - lw_joint
+      - rw_joint
+    loop_hz: 50
+    encoders:
+      resolution: 1048576.0

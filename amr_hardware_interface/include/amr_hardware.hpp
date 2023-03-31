@@ -31,7 +31,11 @@
 #include "domain.hpp"
 #include "utilities.hpp"
 
+#include <thread>
+#include <pthread.h>
+
 #include "../include/amr_hwi_utility.hpp"
+
 
 extern "C"
 {
@@ -39,6 +43,28 @@ extern "C"
 }
 
 using namespace ethercat_interface::utilities;
+
+
+class ScheduledThread : public std::thread
+{
+    public:
+
+    ScheduledThread() {}
+
+    static void setScheduling(std::thread& thread_to_set, int policy, int priority)
+    {
+        sched_param schParam;
+        schParam.sched_priority = priority;
+
+        if(pthread_setschedparam(thread_to_set.native_handle(), policy, &schParam))
+        {
+            std::cerr << "Can't change std::thread scheduling." << std::strerror(errno) << std::endl;
+        }
+
+    }
+    
+};
+
 
 namespace amr
 {
@@ -51,7 +77,10 @@ namespace amr
             HardwareInterface(ros::NodeHandle& nh);
             ~HardwareInterface();
 
+            std::shared_ptr<controller_manager::ControllerManager> cm;
+
             //void update(const ros::TimerEvent& timer_event);
+            void update();
             void read();
             void write();
 
@@ -71,7 +100,7 @@ namespace amr
 
             debug::TimeMeasureInfo_s m_Measurer;
             
-            private:
+            public:
 
             std::vector<std::string> m_JointNames;
 
@@ -81,13 +110,20 @@ namespace amr
             std::vector<double> m_JointVelocities;
             std::vector<double> m_JointEfforts;
 
-            std::vector<double> m_VelocityCommands;
+            int32_t m_TargetVelLeft = 0;
+            int32_t m_TargetVelRight = 0;
 
+            int32_t m_LeftWheelPos = 0;
+            int32_t m_RightWheelPos = 0;
+            
+            public:
+            std::vector<double> m_VelocityCommands;
+            private:
             ros::NodeHandle m_NodeHandle;
 
             ros::ServiceServer m_DriveStatusServer;
             bool m_DriverStatus = true;
-
+            double m_WheelRadius = 0.1;
             //boost::shared_ptr<controller_manager::ControllerManager> m_ControllerManager;
 
             hardware_interface::JointStateInterface m_JointStateInterface;
@@ -95,10 +131,10 @@ namespace amr
             hardware_interface::VelocityJointInterface m_VelJointInterface;
 
             std::unordered_map<std::string, std::string> m_SymbolNameMap;
-
-            
-
+            public:
             utils::VelocityHelper m_DriverInfo;
+
+            utils::PositionHelper m_PositionHelper; 
 
             void loadParams();
 

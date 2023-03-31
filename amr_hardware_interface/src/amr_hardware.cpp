@@ -22,7 +22,7 @@ namespace amr
             : m_NodeHandle{nh}
         {
             this->loadParams();
-
+            cm = std::make_shared<controller_manager::ControllerManager>(this, m_NodeHandle);
             ROS_INFO("Loaded parameters.");
             PERIOD_NS = period_nanosec(500);
             ROS_INFO("PERIOS_NS");
@@ -82,7 +82,7 @@ namespace amr
             if(!m_Master->activateMaster())
             {
                 ROS_FATAL("Can't activate master.");
-                ros::shutdown();
+                
             }
 
             m_NumJoints = m_JointNames.size();
@@ -180,25 +180,11 @@ namespace amr
         } */
 
         void HardwareInterface::write()
-        {
-            //ros::Duration elapsedTime = elapsed_time;
+        {   
+            
+            int32_t targetVelLeft = m_TargetVelLeft;
 
-            ROS_INFO("%d", m_VelocityCommands[0]);
-            ROS_INFO("%d", m_VelocityCommands[1]);
-
-            int32_t targetVelLeft = utils::linearVelToDriverCmd(
-                m_VelocityCommands[0],
-                m_DriverInfo
-            );
-
-            int32_t targetVelRight = utils::linearVelToDriverCmd(
-                m_VelocityCommands[1],
-                m_DriverInfo
-            );
-
-            ROS_INFO("%d", targetVelLeft);
-            ROS_INFO("%d", targetVelRight);
-
+            int32_t targetVelRight = m_TargetVelRight;
 
             m_Master->write<int32_t>(
                 "amr_domain",
@@ -219,24 +205,18 @@ namespace amr
         void HardwareInterface::read()
         {
             
-            double leftWheelVel = (double)(m_Master->read<int32_t>("amr_domain", "EL7221_9014_0", "current_velocity"));
-            double leftWheelPos = 0.0;
-            double rightWheelVel = (double)(m_Master->read<int32_t>("amr_domain", "EL7221_9014_1", "current_velocity"));
-            double rightWheelPos = 0.0;
+            m_LeftWheelPos = m_Master->read<int32_t>("amr_domain", "EL7221_9014_0", "current_position");
+            //double leftWheelPos = 0.0;
+            m_RightWheelPos = m_Master->read<int32_t>("amr_domain", "EL7221_9014_1", "current_position");
+            //double rightWheelPos = 0.0;
 
-            m_JointPositions[0] = leftWheelPos;
+            //m_JointVelocities[0] = utils::driverVelToLinear(leftWheelVel, m_DriverInfo) / m_WheelRadius;
+            //            
+            //m_JointVelocities[1] = utils::driverVelToLinear(rightWheelVel, m_DriverInfo) / m_WheelRadius;
             
-            m_JointVelocities[0] = utils::linearVelToDriverCmd(leftWheelVel, m_DriverInfo);
-            
-            m_JointEfforts[0] = 0.0;
-            
-            m_JointPositions[1] = rightWheelPos;
-            
-            m_JointVelocities[1] = utils::linearVelToDriverCmd(rightWheelVel, m_DriverInfo);
-            
-            m_JointEfforts[1] = 0.0;
-            
-            
+            m_LeftWheelPos = utils::motorPositionToWheelPositionRad(m_LeftWheelPos, m_PositionHelper);
+
+            m_RightWheelPos = utils::motorPositionToWheelPositionRad(m_RightWheelPos, m_PositionHelper);
 
         }
 
@@ -276,6 +256,9 @@ namespace amr
                 m_NodeHandle.getParam("/amr/driver_info/motor_gear_heat", m_DriverInfo.motorGearHeat);
                 m_NodeHandle.getParam("/amr/driver_info/wheel_diameter", m_DriverInfo.wheelDiameter);
                 m_NodeHandle.getParam("/amr/driver_info/motor_max_rpm", m_DriverInfo.motorMaxRPM);
+                
+                m_PositionHelper.gearRatio = (m_DriverInfo.wheelSideGear / m_DriverInfo.motorSideGear) * m_DriverInfo.motorGearHeat;
+                m_NodeHandle.getParam("/amr/hardware_interface/encoders/resolution", m_PositionHelper.encoderResolution);
             }
             else
             {
@@ -283,9 +266,96 @@ namespace amr
             }
                   
         }    
+
         
+        void HardwareInterface::update()
+        {
+
+            //ros::Time prev_time = ros::Time::now();
+            int counter {500};
+            clock_gettime(this->m_ClockToUse, &this->m_WakeupTime);
+            while(ros::ok())
+            {
+                this->m_WakeupTime = addTimespec(this->m_WakeupTime, this->m_CycleTime);
+                sleep_task(this->m_ClockToUse, TIMER_ABSTIME, &this->m_WakeupTime, NULL);
+
+                debug::measureTime(this->m_Measurer, this->m_WakeupTime);
+                //const ros::Time time = ros::Time::now();
+                //const ros::Duration period = prev_time - time;
+                //const ros::Duration period (0,2000000);
+
+                this->m_Master->setMasterTime(timespecToNanoSec(this->m_WakeupTime));
+                this->m_Master->receive("amr_domain");
+
+                this->m_Master->updateDomainStates();
+//              this->m_Master->updateSlaveStates();
+                bool slavesEnabled = this->m_Master->enableSlaves();
+
+                if (counter<1) {
+                auto timingStats = this->m_Measurer.getTimingStats();
+
+                    auto  status0 = this->m_Master->read<uint16_t>("amr_domain", "EL7221_9014_0", "status_word");
+                    auto  status1 = this->m_Master->read<uint16_t>("amr_domain", "EL7221_9014_1", "status_word");
+                    auto  cmd0 = this->m_Master->read<uint16_t>("amr_domain", "EL7221_9014_0", "ctrl_word");
+                    auto  cmd1 = this->m_Master->read<uint16_t>("amr_domain", "EL7221_9014_1", "ctrl_word");
+
+                    std::string str;
+                            if (slavesEnabled) str += "Slaves Enabled \n";
+                            else str += "Slaves Disabled \n";
+                            str += "cmd 0: " + std::to_string(cmd0) + " status 0: " + std::to_string(status0) + "\n" ;
+                            str += "cmd 1: " + std::to_string(cmd1) + " status 1: " + std::to_string(status1) + "\n" ;  
+                            str += "Left Wheel Vel:" + std::to_string(this->m_VelocityCommands[0]) + " Right Wheel Vel: " + std::to_string(this->m_VelocityCommands[1]) + '\n';
+                    ROS_INFO(timingStats.c_str());
+                    ROS_INFO(str.c_str());
+                    counter=500;
+                    this->m_Master->updateMasterState();
+                }
+
+                counter --;
+
     
+                this->m_Master->write<int8_t>(
+                    "amr_domain",
+                    "EL7221_9014_0",
+                    "op_mode",
+                    0x09
+                );
+                this->m_Master->write<int8_t>(
+                    "amr_domain",
+                    "EL7221_9014_1",
+                    "op_mode",
+                    0x09
+                );
+
+                if(slavesEnabled)
+                    this->read();
+
+
+                //cm->update(time, period);
+
+                if(slavesEnabled)
+                    this->write();
+
+                bool syncRefClock = false;
+                if(this->ref_clock_counter)
+                {
+                    this->ref_clock_counter -= 1;
+                }
+                else
+                {
+                    this->ref_clock_counter = 1;
+                    syncRefClock = true;
+                }
+                //prev_time = time;
+                clock_gettime(this->m_ClockToUse, &this->m_Time);
+                this->m_Master->syncMasterClock(timespecToNanoSec(this->m_Time), syncRefClock);
+                this->m_Master->send("amr_domain");
+                this->m_Measurer.updateEndTime();
+            }
+        }
     }
+
+    
 }
 
 
@@ -294,9 +364,52 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "amr_hardware_interface_node");
     ros::NodeHandle nh;
     amr::hardware::HardwareInterface hw(nh);
-    controller_manager::ControllerManager cm(&hw);
-    ros::AsyncSpinner spinner(1);
+    ros::AsyncSpinner spinner(0);
+
+    std::thread controller_thread(&amr::hardware::HardwareInterface::update, &hw);
+    ScheduledThread::setScheduling(controller_thread, SCHED_FIFO, 99);
+    auto prev_time =  ros::Time::now();
+    double r = 0.0;
+    nh.getParam("/amr/hardware_interface/loop_hz", r);
     spinner.start();
+    ros::Rate rate(r);
+    while(ros::ok())
+    {
+        //ros::spinOnce();
+        hw.m_JointPositions[0] = hw.m_LeftWheelPos;
+        hw.m_JointPositions[1] = hw.m_RightWheelPos;
+
+        const auto curr = ros::Time::now();
+        const auto period = ros::Duration(curr - prev_time);
+
+        hw.cm->update(curr, period);
+
+        hw.m_TargetVelLeft = amr::utils::linearVelToDriverCmd(
+                hw.m_VelocityCommands[0] / 10,
+                hw.m_DriverInfo
+        ) * -1 ;
+
+        hw.m_TargetVelRight =  amr::utils::linearVelToDriverCmd(
+            hw.m_VelocityCommands[1] / 10,
+            hw.m_DriverInfo
+        );
+
+        
+        
+        prev_time = curr;
+
+        rate.sleep();
+
+    }
+    
+    if(controller_thread.joinable())
+    {
+        controller_thread.join();
+    }
+    //ros::AsyncSpinner spinner(1);
+    //spinner.start();
+    /* int counter {500};
+    
 
     ros::Time prev_time = ros::Time::now();
 
@@ -304,25 +417,45 @@ int main(int argc, char** argv)
 
     while(ros::ok())
     {   
+        
         hw.m_WakeupTime = addTimespec(hw.m_WakeupTime, hw.m_CycleTime);
         sleep_task(hw.m_ClockToUse, TIMER_ABSTIME, &hw.m_WakeupTime, NULL);
         
         debug::measureTime(hw.m_Measurer, hw.m_WakeupTime);
-
         const ros::Time time = ros::Time::now();
-        const ros::Duration period = time - prev_time;
+        //const ros::Duration period = prev_time - time;
+        const ros::Duration period (0,2000000);
 
         hw.m_Master->setMasterTime(timespecToNanoSec(hw.m_WakeupTime));
         hw.m_Master->receive("amr_domain");
-        hw.m_Master->updateMasterState();
+
         hw.m_Master->updateDomainStates();
-        hw.m_Master->updateSlaveStates();
-        
+//      hw.m_Master->updateSlaveStates();
+        bool slavesEnabled = hw.m_Master->enableSlaves();
+
+        if (counter<1) {
         auto timingStats = hw.m_Measurer.getTimingStats();
 
+        auto  status0 = hw.m_Master->read<uint16_t>("amr_domain", "EL7221_9014_0", "status_word");
+        auto  status1 = hw.m_Master->read<uint16_t>("amr_domain", "EL7221_9014_1", "status_word");
+        auto  cmd0 = hw.m_Master->read<uint16_t>("amr_domain", "EL7221_9014_0", "ctrl_word");
+        auto  cmd1 = hw.m_Master->read<uint16_t>("amr_domain", "EL7221_9014_1", "ctrl_word");
+        
+        std::string str;
+                if (slavesEnabled) str += "Slaves Enabled \n";
+                else str += "Slaves Disabled \n";
+                str += "cmd 0: " + std::to_string(cmd0) + " status 0: " + std::to_string(status0) + "\n" ;
+                str += "cmd 1: " + std::to_string(cmd1) + " status 1: " + std::to_string(status1) + "\n" ;  
+                str += "Left Wheel Vel:" + std::to_string(hw.m_VelocityCommands[0]) + " Right Wheel Vel: " + std::to_string(hw.m_VelocityCommands[1]) + '\n';
         ROS_INFO(timingStats.c_str());
+        ROS_INFO(str.c_str());
+        counter=500;
+        hw.m_Master->updateMasterState();
+        }
+        
+        counter --;
 
-        bool slavesEnabled = hw.m_Master->enableSlaves();
+  
         hw.m_Master->write<int8_t>(
             "amr_domain",
             "EL7221_9014_0",
@@ -335,10 +468,11 @@ int main(int argc, char** argv)
             "op_mode",
             0x09
         );
-
+        
         if(slavesEnabled)
             hw.read();
-
+        
+        
         cm.update(time, period);
 
         if(slavesEnabled)
@@ -354,14 +488,14 @@ int main(int argc, char** argv)
             hw.ref_clock_counter = 1;
             syncRefClock = true;
         }
-
+        prev_time = time;
         clock_gettime(hw.m_ClockToUse, &hw.m_Time);
         hw.m_Master->syncMasterClock(timespecToNanoSec(hw.m_Time), syncRefClock);
         hw.m_Master->send("amr_domain");
-
         hw.m_Measurer.updateEndTime();
+        ros::spinOnce();
     }
-
+ */
     ros::waitForShutdown();
 
     return 0;

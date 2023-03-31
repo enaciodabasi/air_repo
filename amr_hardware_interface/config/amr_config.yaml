@@ -195,8 +195,8 @@ EL7221_9014_1:
 
    sync0_cycle: 2000000
 
-   sync0_shift: 30000
+   sync0_shift: 0
 
    sync1_cycle: 2000000
 
-   sync1_shift: 1000
+   sync1_shift: 0

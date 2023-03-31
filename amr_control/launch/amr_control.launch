@@ -11,6 +11,14 @@
         respawn="false"
         output="screen"
         args="/amr/joint_state_controller /amr/mobile_base_controller"
-    ></node>
+    />
+
+    <!-- convert joint states to TF transforms for rviz, etc -->
+   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+        ns="/amr" respawn="false" output="screen">
+        <remap from="/joint_states" to="/amr/joint_states" />
+        <param name="publish_frequency" type="double" value="50.0" />
+    </node>
+
 
 </launch>

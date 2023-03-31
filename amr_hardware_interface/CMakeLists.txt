@@ -8,6 +8,10 @@ set(ethercat_interface_lib_INCLUDE_DIRS /home/ubuntu/ethercat_interface/include/
 #set(ethercat_interface_lib_INCLUDE_DIRS /home/naci/Projects/igh_master/include/)
 set(etherlab /usr/local/lib/libethercat.so)
 
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
+
 find_package(catkin REQUIRED COMPONENTS 
     roscpp
     hardware_interface
@@ -65,7 +69,7 @@ add_executable(amr_hw_ethercat
 )
 #message(FATAL_ERROR ${ethercat_interface_lib_LIBRARIES})
 
-target_link_libraries(amr_hw_ethercat ${catkin_LIBRARIES} ${ethercat_interface_lib} ${etherlab} ${YAML_CPP_LIBRARIES})
+target_link_libraries(amr_hw_ethercat ${catkin_LIBRARIES} ${ethercat_interface_lib} ${etherlab} ${YAML_CPP_LIBRARIES} Threads::Threads)
 target_link_directories(amr_hw_ethercat PUBLIC ${catkin_INCLUDE_DIRS} ${ethercat_interface_lib_INCLUDE_DIRS} ${YAML_CPP_INCLUDE_DIRS})
 
 install(TARGETS amr_hw_ethercat

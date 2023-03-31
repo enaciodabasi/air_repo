@@ -20,5 +20,12 @@ namespace amr
 
             return driverCmd;
         }
+
+        double motorPositionToWheelPositionRad(const int32_t encoder_count, const PositionHelper& pos_helper)
+        {
+            double pos_rad = ((encoder_count / pos_helper.encoderResolution) * (2.0 * M_PI)) / pos_helper.gearRatio;
+
+            return pos_rad;
+        }
     }
 }
