@@ -10,6 +10,8 @@
         <rosparam file="$(find amr_navigation)/params/global_costmap_params.yaml" command="load" />
         <rosparam file="$(find amr_navigation)/params/move_base_params.yaml" command="load" />
         <rosparam file="$(find amr_navigation)/params/dwa_local_planner_params.yaml" command="load" />
+        <remap from="cmd_vel" to="/amr/mobile_base_controller/cmd_vel"/>
+        <remap from="odom" to="/odometry/filtered"/>
     </node>
 
 </launch>

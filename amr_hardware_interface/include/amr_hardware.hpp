@@ -125,7 +125,7 @@ namespace amr
 
             ros::ServiceServer m_DriveStatusServer;
             bool m_DriverStatus = true;
-            double m_WheelRadius = 0.1;
+            //double m_WheelRadius = 0.1;
             //boost::shared_ptr<controller_manager::ControllerManager> m_ControllerManager;
             
             hardware_interface::JointStateInterface m_JointStateInterface;

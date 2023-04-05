@@ -4,15 +4,15 @@
 
     <param
         name="robot_description"
-        textfile="$(find amr_description)/urdf/amr.urdf"
+        textfile="$(find amr_description)/urdf/amr_simply.urdf"
     />
-    <!--node
+    <node
     name="robot_state_publisher"
     pkg="robot_state_publisher"
     type="robot_state_publisher"
     respawn="false"
     output="screen"
-    /-->
+    />
     <!-- <node
     name="joint_state_publisher"
     pkg="joint_state_publisher"
@@ -20,9 +20,9 @@
 
     <include file="$(find amr_hardware_interface)/launch/controller_hardware_interface.launch"></include>
     <include file="$(find amr_control)/launch/amr_control.launch"></include>
-    <!--include file="$(find amr_localization)/launch/amr_localization.launch"></include>
+    <!-- <include file="$(find amr_localization)/launch/amr_localization.launch"></include> -->
     <include file="$(find amr_mapping)/launch/amr_mapping.launch"></include>
-    <include file="$(find amr_navigation)/launch/amr_navigation.launch"></include-->
+    <!-- <include file="$(find amr_navigation)/launch/amr_navigation.launch"></include> -->
 
     <node
     name="rviz"

@@ -137,26 +137,11 @@ namespace amr
         }
 
         void HardwareInterface::write()
-<<<<<<< HEAD
         {   
             
             int32_t targetVelLeft = m_TargetVelLeft;
 
             int32_t targetVelRight = m_TargetVelRight;
-=======
-        {
-
-            int32_t targetVelLeft = utils::linearVelToDriverCmd(
-                m_VelocityCommands[0] * m_WheelRadius,
-                m_DriverInfo
-            );
-
-            int32_t targetVelRight = utils::linearVelToDriverCmd(
-                m_VelocityCommands[1] * m_WheelRadius,
-                m_DriverInfo
-            );
-
->>>>>>> 7b3a55e1693f825628f05097868521a33ebcdc02
 
             m_Master->write<int32_t>(
                 "amr_domain",
@@ -177,7 +162,6 @@ namespace amr
         void HardwareInterface::read()
         {
             
-<<<<<<< HEAD
             m_LeftWheelPos = m_Master->read<int32_t>("amr_domain", "EL7221_9014_0", "current_position");
             //double leftWheelPos = 0.0;
             m_RightWheelPos = m_Master->read<int32_t>("amr_domain", "EL7221_9014_1", "current_position");
@@ -190,16 +174,6 @@ namespace amr
             m_LeftWheelPos = utils::motorPositionToWheelPositionRad(m_LeftWheelPos, m_PositionHelper);
 
             m_RightWheelPos = utils::motorPositionToWheelPositionRad(m_RightWheelPos, m_PositionHelper);
-=======
-            double leftWheelVel = (double)(m_Master->read<int32_t>("amr_domain", "EL7221_9014_0", "current_velocity"));
-            double leftWheelPos = 0.0;
-            double rightWheelVel = (double)(m_Master->read<int32_t>("amr_domain", "EL7221_9014_1", "current_velocity"));
-            double rightWheelPos = 0.0;
-
-            m_JointVelocities[0] = utils::driverVelToLinear(leftWheelVel, m_DriverInfo);
-                        
-            m_JointVelocities[1] = utils::driverVelToLinear(rightWheelVel, m_DriverInfo);
->>>>>>> 7b3a55e1693f825628f05097868521a33ebcdc02
 
         }
 
@@ -359,7 +333,7 @@ int main(int argc, char** argv)
     while(ros::ok())
     {
         //ros::spinOnce();
-        hw.m_JointPositions[0] = hw.m_LeftWheelPos;
+        hw.m_JointPositions[0] = hw.m_LeftWheelPos * -1.0;
         hw.m_JointPositions[1] = hw.m_RightWheelPos;
 
         const auto curr = ros::Time::now();
